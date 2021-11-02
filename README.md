@@ -10,7 +10,7 @@
 
 2. Decode base64-encoded image
 
-In the JavaScript file:
+    In the JavaScript file:
 
     ```js
     cordova.plugins.DBR.decode(base64,callback)
