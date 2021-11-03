@@ -9,6 +9,7 @@
   // Member variables go here.
 @property (nonatomic, retain) DynamsoftBarcodeReader* barcodeReader;
 @property Boolean initialized;
+@property Boolean decoding;
   - (void)decode:(CDVInvokedUrlCommand*)command;
 @end
 
@@ -64,43 +65,47 @@
 
 - (NSArray<NSDictionary*>*)decodeBase64: (NSString*) base64 {
     NSMutableArray<NSDictionary*> * resultsArray = [[ NSMutableArray alloc] init];
-    @try {
-        NSError __autoreleasing * _Nullable error;
-        NSArray<iTextResult*>* results = [_barcodeReader decodeBase64:base64 withTemplate:@"" error:&error];
-
-        //NSMutableArray<NSDictionary*> *resultsArray =  [[NSMutableArray alloc] init];;
-        
-        for (iTextResult* result in results) {
-            CGPoint p1 = [result.localizationResult.resultPoints[0] CGPointValue];
-            CGPoint p2 = [result.localizationResult.resultPoints[1] CGPointValue];
-            CGPoint p3 = [result.localizationResult.resultPoints[2] CGPointValue];
-            CGPoint p4 = [result.localizationResult.resultPoints[3] CGPointValue];
+    if (_initialized==true && _decoding==false){
+        @try {
+            NSLog(@"Decoding...");
+            _decoding=true;
+            NSError __autoreleasing * _Nullable error;
+            NSArray<iTextResult*>* results = [_barcodeReader decodeBase64:base64 withTemplate:@"" error:&error];
+            _decoding=false;
+            //NSMutableArray<NSDictionary*> *resultsArray =  [[NSMutableArray alloc] init];;
             
+            for (iTextResult* result in results) {
+                CGPoint p1 = [result.localizationResult.resultPoints[0] CGPointValue];
+                CGPoint p2 = [result.localizationResult.resultPoints[1] CGPointValue];
+                CGPoint p3 = [result.localizationResult.resultPoints[2] CGPointValue];
+                CGPoint p4 = [result.localizationResult.resultPoints[3] CGPointValue];
+                
 
-            NSDictionary *dictionary = @{
-                   @"barcodeText" : result.barcodeText,
-                   @"barcodeFormat" : result.barcodeFormatString,
-                   @"x1" : @(p1.x),
-                   @"y1" : @(p1.y),
-                   @"x2" : @(p2.x),
-                   @"y2" : @(p2.y),
-                   @"x3" : @(p3.x),
-                   @"y3" : @(p3.y),
-                   @"x4" : @(p4.x),
-                   @"y4" : @(p4.y)
-            };
-            NSLog(@"%@", @(p1.x));
-            NSLog(@"%@", result.barcodeText);
-            [resultsArray addObject:(dictionary)];
+                NSDictionary *dictionary = @{
+                       @"barcodeText" : result.barcodeText,
+                       @"barcodeFormat" : result.barcodeFormatString,
+                       @"x1" : @(p1.x),
+                       @"y1" : @(p1.y),
+                       @"x2" : @(p2.x),
+                       @"y2" : @(p2.y),
+                       @"x3" : @(p3.x),
+                       @"y3" : @(p3.y),
+                       @"x4" : @(p4.x),
+                       @"y4" : @(p4.y)
+                };
+                //NSLog(@"%@", @(p1.x));
+                //NSLog(@"%@", result.barcodeText);
+                [resultsArray addObject:(dictionary)];
+                
+            }
+        }
+        @catch (NSException *exception) {
+            NSLog(@"Exception:%@",exception);
+        }
+        @finally{
+            NSLog(@"Skip");
         }
     }
-    @catch (NSException *exception) {
-        NSLog(@"Exception:%@",exception);
-    }
-    @finally{
-        NSLog(@"Skip");
-    }
-    
     NSArray<NSDictionary *> *array = [resultsArray copy];
     return array;
 }
