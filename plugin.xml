@@ -10,8 +10,7 @@
 
 <podspec>
     <config>
-        <source url="https://github.com/brightcove/BrightcoveSpecs.git" />
-        <source url="https://github.com/CocoaPods/Specs.git"/>
+        <source url="https://github.com/xulihang/dbr-podspec.git" />
     </config>
         <pods use-frameworks="true">
         <pod name="DynamsoftBarcodeReader" spec="~> 8.8" />
