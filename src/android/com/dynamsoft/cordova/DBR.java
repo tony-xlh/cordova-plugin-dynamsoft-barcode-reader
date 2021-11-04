@@ -45,7 +45,7 @@ public class DBR extends CordovaPlugin {
             e.printStackTrace();
         }
         DMDLSConnectionParameters dbrParameters = new DMDLSConnectionParameters();
-        dbrParameters.organizationID = "200001";
+        dbrParameters.organizationID = organizationID;
         barcodeReader.initLicenseFromDLS(dbrParameters, new DBRDLSLicenseVerificationListener() {
             @Override
             public void DLSLicenseVerificationCallback(boolean isSuccessful, Exception e) {
@@ -57,8 +57,12 @@ public class DBR extends CordovaPlugin {
     }
 
     private void decode(String base64, CallbackContext callbackContext) {
-        JSONArray results = decodeBase64(base64);
-        callbackContext.success(results);
+        cordova.getThreadPool().execute(new Runnable() {
+            public void run() {
+                JSONArray results = decodeBase64(base64);
+                callbackContext.success(results); // Thread-safe.
+            }
+        });
     }
     
     private JSONArray decodeBase64(String base64) {
@@ -66,7 +70,6 @@ public class DBR extends CordovaPlugin {
          
         try {
             TextResult[] results = barcodeReader.decodeBase64String(base64, "");
-            System.out.println(results[0].barcodeText);
             for (TextResult result : results) {
                 
                 JSONObject decodingResult = new JSONObject();
