@@ -7,7 +7,17 @@
 <feature name="DBR"><param name="ios-package" value="DBR" /></feature>
 </config-file><source-file src="src/ios/DBR.m" />
 <!--<framework custom="true" embed="true" src="src/ios/DynamsoftBarcodeReader.framework" />-->
-<framework src="DynamsoftBarcodeReader" type="podspec" spec="~> 8.8" />
+
+<podspec>
+    <config>
+        <source url="https://github.com/brightcove/BrightcoveSpecs.git" />
+        <source url="https://github.com/CocoaPods/Specs.git"/>
+    </config>
+        <pods use-frameworks="true">
+        <pod name="DynamsoftBarcodeReader" spec="~> 8.8" />
+  </pods>
+</podspec>
+
 </platform>
 <platform name="android">
 <config-file parent="/*" target="res/xml/config.xml">
