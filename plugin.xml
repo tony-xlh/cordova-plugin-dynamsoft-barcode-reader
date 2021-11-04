@@ -5,7 +5,9 @@
 
 <platform name="ios"><config-file parent="/*" target="config.xml">
 <feature name="DBR"><param name="ios-package" value="DBR" /></feature>
-</config-file><source-file src="src/ios/DBR.m" /><framework custom="true" embed="true" src="src/ios/DynamsoftBarcodeReader.framework" /></platform>
+</config-file><source-file src="src/ios/DBR.m" />
+<!--<framework custom="true" embed="true" src="src/ios/DynamsoftBarcodeReader.framework" /></platform>-->
+<framework src="DynamsoftBarcodeReader" type="podspec" spec="~> 8.8" />
 
 <platform name="android">
 <config-file parent="/*" target="res/xml/config.xml">
