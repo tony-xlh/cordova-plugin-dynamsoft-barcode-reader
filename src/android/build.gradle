@@ -1,0 +1,16 @@
+repositories{    
+  maven {
+    url "https://download2.dynamsoft.com/maven/dbr/aar"
+  }
+}
+
+dependencies {
+  implementation 'com.dynamsoft:dynamsoftbarcodereader:8.8.0@aar'
+}
+
+android {
+  packagingOptions {
+    exclude 'META-INF/NOTICE'
+    exclude 'META-INF/LICENSE'
+  }
+}
