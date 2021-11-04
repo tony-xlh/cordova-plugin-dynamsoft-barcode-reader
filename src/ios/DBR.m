@@ -18,7 +18,8 @@
 - (void)init:(CDVInvokedUrlCommand*)command
 {
     [self.commandDelegate runInBackground:^{
-        [self initDBR];
+        NSString* organizationID = [command.arguments objectAtIndex:0];
+        [self initDBR: organizationID];
         CDVPluginResult* result = [CDVPluginResult
                                        resultWithStatus: CDVCommandStatus_OK
                                    messageAsString: self->_barcodeReader.getVersion
@@ -44,7 +45,7 @@
     
 }
 
-- (void)initDBR{
+- (void)initDBR: (NSString*) organizationID{
     if (_initialized==false){
         NSLog(@"%s", "Initializing");
         iDMDLSConnectionParameters* dls = [[iDMDLSConnectionParameters alloc] init];
@@ -52,7 +53,7 @@
         // The organization id 200001 here will grant you a public trial license good for 7 days. Note that network connection is required for this license to work.
         // If you want to use an offline license, please contact Dynamsoft Support: https://www.dynamsoft.com/company/contact/
         // You can also request a 30-day trial license in the customer portal: https://www.dynamsoft.com/customer/license/trialLicense?product=dbr&utm_source=installer&package=ios
-        dls.organizationID = @"200001";
+        dls.organizationID = organizationID;
         _barcodeReader = [[DynamsoftBarcodeReader alloc] initLicenseFromDLS:dls verificationDelegate:self];
         _initialized = true;
     }else{
