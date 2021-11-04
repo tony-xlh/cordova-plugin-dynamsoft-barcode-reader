@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import com.dynamsoft.dbr.BarcodeReader;
 import com.dynamsoft.dbr.BarcodeReaderException;
+import com.dynamsoft.dbr.DBRDLSLicenseVerificationListener;
 import com.dynamsoft.dbr.DMDLSConnectionParameters;
 import com.dynamsoft.dbr.TextResult;
 
@@ -39,14 +40,20 @@ public class DBR extends CordovaPlugin {
     
     private void initDBR(String organizationID) {
         try {
-            DMDLSConnectionParameters info = BarcodeReader.initDLSConnectionParameters();
-            info.organizationID = organizationID;
-            BarcodeReader.initLicenseFromDLS(info);
             barcodeReader = new BarcodeReader();
         } catch (BarcodeReaderException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        DMDLSConnectionParameters dbrParameters = new DMDLSConnectionParameters();
+        dbrParameters.organizationID = "200001";
+        barcodeReader.initLicenseFromDLS(dbrParameters, new DBRDLSLicenseVerificationListener() {
+            @Override
+            public void DLSLicenseVerificationCallback(boolean isSuccessful, Exception e) {
+                if (!isSuccessful) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private void decode(String base64, CallbackContext callbackContext) {
@@ -75,7 +82,7 @@ public class DBR extends CordovaPlugin {
                 decodingResult.put("y4", result.localizationResult.resultPoints[3].y);
                 decodingResults.put(decodingResult);
             }
-        } catch (BarcodeReaderException e) {
+        } catch (BarcodeReaderException | JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
