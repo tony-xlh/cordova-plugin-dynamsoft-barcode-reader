@@ -1,4 +1,4 @@
-def minSdkVersion = 19
+def minSdkVersion = 21
 
 if(cdvMinSdkVersion == null) {
     ext.cdvMinSdkVersion = minSdkVersion;
@@ -8,21 +8,15 @@ if(cdvMinSdkVersion == null) {
 
 repositories{
     jcenter()
-    flatDir{
-        dirs 'src/main/libs'
+    maven {
+        url "http://download2.dynamsoft.com/maven/dbr/aar"
     }
 }
 
-repositories {      
-        maven {
-            url "http://download2.dynamsoft.com/maven/dbr/aar"
-        }
-    }
 
 dependencies {
     //implementation 'com.android.support:support-v4:+'
     compile 'com.android.support:support-v4:27.1.0'
-    implementation(name:'dbr', ext:'aar')
     implementation 'com.dynamsoft:dynamsoftbarcodereader:latest.release@aar'
 }
 android {
