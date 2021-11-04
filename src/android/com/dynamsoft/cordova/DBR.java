@@ -1,4 +1,4 @@
-package cordova-plugin-dynamsoft-barcode-reader;
+package com.dynamsoft.cordova;
 
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
