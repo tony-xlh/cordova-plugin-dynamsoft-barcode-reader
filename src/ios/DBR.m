@@ -37,7 +37,7 @@
         NSArray<NSDictionary*> *array = [self decodeBase64: base64];
         CDVPluginResult* result = [CDVPluginResult
                                        resultWithStatus: CDVCommandStatus_OK
-                                       messageAsMultipart: array
+                                       messageAsArray: array
                                        ];
             
         [[self commandDelegate] sendPluginResult:result callbackId:command.callbackId];
