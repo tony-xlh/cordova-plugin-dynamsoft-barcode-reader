@@ -6,15 +6,15 @@ Dynamsoft Barcode Reader SDK for Cordova.
 
 ### Install the plugin
 
-    ```
-    $ cordova plugins install cordova-plugin-dynamsoft-barcode-reader
-    ```
-    
-    Or:
-    
-    ```
-    $ cordova plugins install https://github.com/cordova-plugin-dynamsoft-barcode-reader
-    ```
+```
+$ cordova plugins install cordova-plugin-dynamsoft-barcode-reader
+```
+
+Or:
+
+```
+$ cordova plugins install https://github.com/cordova-plugin-dynamsoft-barcode-reader
+```
 
 ### Methods
 
@@ -23,7 +23,7 @@ Dynamsoft Barcode Reader SDK for Cordova.
     Initialize Dynamsoft Barcode Reader with an organization ID.
     
     ```js
-    cordova.plugins.DBR.decode(base64,successCallback,errorCallback);
+    cordova.plugins.DBR.init(organizationID,successCallback,errorCallback);
     ```
 
 * `decode`
@@ -89,11 +89,11 @@ Dynamsoft Barcode Reader SDK for Cordova.
 2. Add platform
 
     ```
-    plugman platform add --platform_name ios
+    $ plugman platform add --platform_name ios
     ```
     
     ```
-    plugman platform add --platform_name android
+    $ plugman platform add --platform_name android
     ```
 
 3. Implement the plugin
@@ -103,5 +103,5 @@ Dynamsoft Barcode Reader SDK for Cordova.
 4. Create package.json 
 
     ```
-    plugman createpackagejson .
+    $ plugman createpackagejson .
     ```

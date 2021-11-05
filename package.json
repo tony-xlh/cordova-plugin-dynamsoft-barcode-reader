@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-dynamsoft-barcode-reader",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Plugin for Dynamsoft Barcode Reader",
   "cordova": {
     "id": "cordova-plugin-dynamsoft-barcode-reader",
