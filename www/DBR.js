@@ -11,3 +11,10 @@ exports.init = function (arg0, success, error) {
     exec(success, error, 'DBR', 'init', [arg0]);
 };
 
+exports.initRuntimeSettingsWithString = function (arg0, success, error) {
+    exec(success, error, 'DBR', 'initRuntimeSettingsWithString', [arg0]);
+};
+
+exports.outputSettingsToString = function (success, error) {
+    exec(success, error, 'DBR', 'outputSettingsToString', []);
+};

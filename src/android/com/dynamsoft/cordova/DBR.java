@@ -11,6 +11,7 @@ import com.dynamsoft.dbr.BarcodeReader;
 import com.dynamsoft.dbr.BarcodeReaderException;
 import com.dynamsoft.dbr.DBRDLSLicenseVerificationListener;
 import com.dynamsoft.dbr.DMDLSConnectionParameters;
+import com.dynamsoft.dbr.EnumConflictMode;
 import com.dynamsoft.dbr.TextResult;
 
 /**
@@ -24,10 +25,29 @@ public class DBR extends CordovaPlugin {
             String message = args.getString(0);
             this.init(message, callbackContext);
             return true;
-        }
-        if (action.equals("decode")) {
+        }else if (action.equals("decode")) {
             String message = args.getString(0);
             this.decode(message, callbackContext);
+            return true;
+        }else if (action.equals("outputSettingsToString")) {
+            try {
+                String settings = barcodeReader.outputSettingsToString("currentRuntimeSettings");
+                callbackContext.success(settings);
+            } catch (BarcodeReaderException e) {
+                e.printStackTrace();
+                callbackContext.error(e.getMessage());
+            }
+            return true;
+        }else if (action.equals("initRuntimeSettingsWithString")) {
+            String template = args.getString(0);
+            try {
+                System.out.println(template);
+                barcodeReader.initRuntimeSettingsWithString(template, EnumConflictMode.CM_OVERWRITE);
+                callbackContext.success();
+            } catch (BarcodeReaderException e) {
+                e.printStackTrace();
+                callbackContext.error(e.getMessage());
+            }
             return true;
         }
         return false;
