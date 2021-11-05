@@ -34,16 +34,17 @@ public class DBR extends CordovaPlugin {
     }
 
     private void init(String organizationID, CallbackContext callbackContext) {
-        initDBR(organizationID);
-        callbackContext.success();
-    }
-    
-    private void initDBR(String organizationID) {
         try {
-            barcodeReader = new BarcodeReader();
+            initDBR(organizationID);
+            callbackContext.success();
         } catch (BarcodeReaderException e) {
             e.printStackTrace();
+            callbackContext.error(e.getMessage());
         }
+    }
+    
+    private void initDBR(String organizationID) throws BarcodeReaderException {
+        barcodeReader = new BarcodeReader();
         DMDLSConnectionParameters dbrParameters = new DMDLSConnectionParameters();
         dbrParameters.organizationID = organizationID;
         barcodeReader.initLicenseFromDLS(dbrParameters, new DBRDLSLicenseVerificationListener() {
@@ -57,37 +58,36 @@ public class DBR extends CordovaPlugin {
     }
 
     private void decode(String base64, CallbackContext callbackContext) {
-        cordova.getThreadPool().execute(new Runnable() {
+         cordova.getThreadPool().execute(new Runnable() {
             public void run() {
-                JSONArray results = decodeBase64(base64);
-                callbackContext.success(results); // Thread-safe.
+                try {
+                    JSONArray results = decodeBase64(base64);
+                    callbackContext.success(results); // Thread-safe.
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    callbackContext.error(e.getMessage());
+                }
             }
         });
     }
     
-    private JSONArray decodeBase64(String base64) {
+    private JSONArray decodeBase64(String base64) throws BarcodeReaderException, JSONException {
         JSONArray decodingResults = new JSONArray();
-         
-        try {
-            TextResult[] results = barcodeReader.decodeBase64String(base64, "");
-            for (TextResult result : results) {
-                
-                JSONObject decodingResult = new JSONObject();
-                decodingResult.put("barcodeText", result.barcodeText);
-                decodingResult.put("barcodeFormat", result.barcodeFormatString);
-                decodingResult.put("x1", result.localizationResult.resultPoints[0].x);
-                decodingResult.put("y1", result.localizationResult.resultPoints[0].y);
-                decodingResult.put("x2", result.localizationResult.resultPoints[1].x);
-                decodingResult.put("y2", result.localizationResult.resultPoints[1].y);
-                decodingResult.put("x3", result.localizationResult.resultPoints[2].x);
-                decodingResult.put("y3", result.localizationResult.resultPoints[2].y);
-                decodingResult.put("x4", result.localizationResult.resultPoints[3].x);
-                decodingResult.put("y4", result.localizationResult.resultPoints[3].y);
-                decodingResults.put(decodingResult);
-            }
-        } catch (BarcodeReaderException | JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        TextResult[] results = barcodeReader.decodeBase64String(base64, "");
+        for (TextResult result : results) {
+
+            JSONObject decodingResult = new JSONObject();
+            decodingResult.put("barcodeText", result.barcodeText);
+            decodingResult.put("barcodeFormat", result.barcodeFormatString);
+            decodingResult.put("x1", result.localizationResult.resultPoints[0].x);
+            decodingResult.put("y1", result.localizationResult.resultPoints[0].y);
+            decodingResult.put("x2", result.localizationResult.resultPoints[1].x);
+            decodingResult.put("y2", result.localizationResult.resultPoints[1].y);
+            decodingResult.put("x3", result.localizationResult.resultPoints[2].x);
+            decodingResult.put("y3", result.localizationResult.resultPoints[2].y);
+            decodingResult.put("x4", result.localizationResult.resultPoints[3].x);
+            decodingResult.put("y4", result.localizationResult.resultPoints[3].y);
+            decodingResults.put(decodingResult);
         }
         return decodingResults;
     }
