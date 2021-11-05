@@ -10,7 +10,10 @@
 @property (nonatomic, retain) DynamsoftBarcodeReader* barcodeReader;
 @property Boolean initialized;
 @property Boolean decoding;
-  - (void)decode:(CDVInvokedUrlCommand*)command;
+- (void)init:(CDVInvokedUrlCommand*)command;
+- (void)decode:(CDVInvokedUrlCommand*)command;
+- (void)initRuntimeSettingsWithString:(CDVInvokedUrlCommand*)command;
+- (void)outputSettingsToString:(CDVInvokedUrlCommand*)command;
 @end
 
 @implementation DBR
@@ -43,6 +46,33 @@
         [[self commandDelegate] sendPluginResult:result callbackId:command.callbackId];
     }];
     
+}
+
+- (void)initRuntimeSettingsWithString:(CDVInvokedUrlCommand*)command
+{
+
+    NSString* template = [command.arguments objectAtIndex:0];
+    NSError __autoreleasing * _Nullable error;
+    [_barcodeReader initRuntimeSettingsWithString:template conflictMode:EnumConflictModeOverwrite error:&error];
+    CDVPluginResult* result = [CDVPluginResult
+                                   resultWithStatus: CDVCommandStatus_OK
+                                   messageAsBool: true
+                                   ];
+        
+    [[self commandDelegate] sendPluginResult:result callbackId:command.callbackId];
+}
+
+- (void)outputSettingsToString:(CDVInvokedUrlCommand*)command
+{
+
+    NSError __autoreleasing * _Nullable error;
+    NSString * settings = [_barcodeReader outputSettingsToString:@"currentRuntimeSettings" error:&error];
+    CDVPluginResult* result = [CDVPluginResult
+                                   resultWithStatus: CDVCommandStatus_OK
+                                   messageAsString: settings
+                                   ];
+        
+    [[self commandDelegate] sendPluginResult:result callbackId:command.callbackId];
 }
 
 - (void)initDBR: (NSString*) organizationID{
