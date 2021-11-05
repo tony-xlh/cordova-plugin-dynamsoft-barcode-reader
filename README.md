@@ -1,5 +1,7 @@
 # cordova-plugin-dynamsoft-barcode-reader
 
+![version](https://img.shields.io/npm/v/cordova-plugin-dynamsoft-barcode-reader.svg)
+
 Dynamsoft Barcode Reader SDK for Cordova.
 
 ## How to use
