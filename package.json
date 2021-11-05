@@ -1,19 +1,22 @@
 {
   "name": "cordova-plugin-dynamsoft-barcode-reader",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Plugin for Dynamsoft Barcode Reader",
   "cordova": {
     "id": "cordova-plugin-dynamsoft-barcode-reader",
     "platforms": [
-      "ios"
+      "ios",
+      "android"
     ]
   },
   "keywords": [
     "ecosystem:cordova",
-    "cordova-ios"
+    "cordova-ios",
+    "cordova-android",
+    "barcode"
   ],
   "author": "Xu Lihang",
-  "license": "ISC",
+  "license": "Apache 2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/xulihang/cordova-plugin-dynamsoft-barcode-reader.git"
