@@ -2,7 +2,12 @@
 
 ![version](https://img.shields.io/npm/v/cordova-plugin-dynamsoft-barcode-reader.svg)
 
-Dynamsoft Barcode Reader SDK for Cordova.
+[Dynamsoft Barcode Reader](https://www.dynamsoft.com/barcode-reader/overview/) SDK for Cordova.
+
+## Supported Platforms
+
+* Android
+* iOS
 
 ## How to use
 
@@ -79,6 +84,31 @@ $ cordova plugins install https://github.com/cordova-plugin-dynamsoft-barcode-re
     ```js
     cordova.plugins.DBR.outputSettingsToString(onOutput);
     ```
+
+## Supported Barcode Symbologies
+
+* Code 39
+* Code 93
+* Code 128
+* Codabar
+* EAN-8
+* EAN-13
+* UPC-A
+* UPC-E
+* Interleaved 2 of 5 (ITF)
+* Industrial 2 of 5 (Code 2 of 5 Industry, Standard 2 of 5, Code 2 of 5)
+* ITF-14 
+* QRCode
+* DataMatrix
+* PDF417
+* GS1 DataBar
+* Maxicode
+* Micro PDF417
+* Micro QR
+* PatchCode
+* GS1 Composite
+* Postal Code
+* Dot Code
 
 ## How the plugin is made
 
