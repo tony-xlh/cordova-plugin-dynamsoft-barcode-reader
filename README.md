@@ -27,10 +27,10 @@ $ cordova plugins install https://github.com/cordova-plugin-dynamsoft-barcode-re
 
 * `init`
 
-    Initialize Dynamsoft Barcode Reader with an organization ID.
+    Initialize Dynamsoft Barcode Reader with a valid license. You can apply for a trial license [here](https://www.dynamsoft.com/customer/license/trialLicense/?product=dbr).
     
     ```js
-    cordova.plugins.DBR.init(organizationID,successCallback,errorCallback);
+    cordova.plugins.DBR.init(license,successCallback,errorCallback);
     ```
 
 * `decode`
