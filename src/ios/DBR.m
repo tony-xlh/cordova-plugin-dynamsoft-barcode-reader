@@ -11,6 +11,7 @@
 @property Boolean initialized;
 @property Boolean decoding;
 - (void)init:(CDVInvokedUrlCommand*)command;
+- (void)initWithOrganizationID:(CDVInvokedUrlCommand*)command;
 - (void)decode:(CDVInvokedUrlCommand*)command;
 - (void)initRuntimeSettingsWithString:(CDVInvokedUrlCommand*)command;
 - (void)outputSettingsToString:(CDVInvokedUrlCommand*)command;
@@ -21,8 +22,23 @@
 - (void)init:(CDVInvokedUrlCommand*)command
 {
     [self.commandDelegate runInBackground:^{
+        NSString* license = [command.arguments objectAtIndex:0];
+        [self initDBR: license];
+        CDVPluginResult* result = [CDVPluginResult
+                                       resultWithStatus: CDVCommandStatus_OK
+                                   messageAsString: self->_barcodeReader.getVersion
+                                       ];
+            
+        [[self commandDelegate] sendPluginResult:result callbackId:command.callbackId];
+    }];
+    
+}
+
+- (void)initWithOrganizationID:(CDVInvokedUrlCommand*)command
+{
+    [self.commandDelegate runInBackground:^{
         NSString* organizationID = [command.arguments objectAtIndex:0];
-        [self initDBR: organizationID];
+        [self initDBRWithOrganizationID: organizationID];
         CDVPluginResult* result = [CDVPluginResult
                                        resultWithStatus: CDVCommandStatus_OK
                                    messageAsString: self->_barcodeReader.getVersion
@@ -75,7 +91,17 @@
     [[self commandDelegate] sendPluginResult:result callbackId:command.callbackId];
 }
 
-- (void)initDBR: (NSString*) organizationID{
+- (void)initDBR: (NSString*) license{
+    if (_initialized==false){
+        NSLog(@"%s", "Initializing");
+        _barcodeReader = [[DynamsoftBarcodeReader alloc] initWithLicense:license];
+        _initialized = true;
+    }else{
+        NSLog(@"%s", "Already initialized.");
+    }
+}
+
+- (void)initDBRWithOrganizationID: (NSString*) organizationID{
     if (_initialized==false){
         NSLog(@"%s", "Initializing");
         iDMDLSConnectionParameters* dls = [[iDMDLSConnectionParameters alloc] init];
@@ -89,9 +115,6 @@
     }else{
         NSLog(@"%s", "Already initialized.");
     }
-   
-    
-    
 }
 
 - (NSArray<NSDictionary*>*)decodeBase64: (NSString*) base64 {

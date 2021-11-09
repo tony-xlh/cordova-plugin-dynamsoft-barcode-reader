@@ -11,6 +11,10 @@ exports.init = function (arg0, success, error) {
     exec(success, error, 'DBR', 'init', [arg0]);
 };
 
+exports.initWithOrganizationID = function (arg0, success, error) {
+    exec(success, error, 'DBR', 'initWithOrganizationID', [arg0]);
+};
+
 exports.initRuntimeSettingsWithString = function (arg0, success, error) {
     exec(success, error, 'DBR', 'initRuntimeSettingsWithString', [arg0]);
 };

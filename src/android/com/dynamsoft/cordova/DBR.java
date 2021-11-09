@@ -25,6 +25,10 @@ public class DBR extends CordovaPlugin {
             String message = args.getString(0);
             this.init(message, callbackContext);
             return true;
+        }else if (action.equals("initWithOrganizationID")) {
+            String message = args.getString(0);
+            this.initWithOrganizationID(message, callbackContext);
+            return true;
         }else if (action.equals("decode")) {
             String message = args.getString(0);
             this.decode(message, callbackContext);
@@ -53,17 +57,28 @@ public class DBR extends CordovaPlugin {
         return false;
     }
 
-    private void init(String organizationID, CallbackContext callbackContext) {
+    private void init(String license, CallbackContext callbackContext) {
         try {
-            initDBR(organizationID);
+            barcodeReader = new BarcodeReader();
+            barcodeReader.initLicense(license);
             callbackContext.success();
         } catch (BarcodeReaderException e) {
             e.printStackTrace();
             callbackContext.error(e.getMessage());
         }
     }
-    
-    private void initDBR(String organizationID) throws BarcodeReaderException {
+
+    private void initWithOrganizationID(String organizationID, CallbackContext callbackContext) {
+        try {
+            initDBRWithOrganizationID(organizationID);
+            callbackContext.success();
+        } catch (BarcodeReaderException e) {
+            e.printStackTrace();
+            callbackContext.error(e.getMessage());
+        }
+    }
+
+    private void initDBRWithOrganizationID(String organizationID) throws BarcodeReaderException {
         barcodeReader = new BarcodeReader();
         DMDLSConnectionParameters dbrParameters = new DMDLSConnectionParameters();
         dbrParameters.organizationID = organizationID;
