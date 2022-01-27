@@ -9,7 +9,7 @@ if(cdvMinSdkVersion == null) {
 repositories{
     jcenter()
     maven {
-        url "http://download2.dynamsoft.com/maven/dbr/aar"
+        url "https://download2.dynamsoft.com/maven/dbr/aar"
     }
 }
 
