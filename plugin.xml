@@ -26,4 +26,16 @@
 <config-file parent="/*" target="AndroidManifest.xml"></config-file>
 <source-file src="src/android/com/dynamsoft/cordova/DBR.java" target-dir="src/com/dynamsoft/cordova" /><framework src="src/android/barcodereader.gradle" custom="true" type="gradleReference" /></platform>
 
+<platform name="browser">
+    <config-file target="config.xml" parent="/*">
+        <feature name="DBR">
+            <param name="browser-package" value="DBR" />
+        </feature>
+    </config-file>
+
+    <js-module src="src/browser/DBR.js" name="DBRJS">
+        <runs />
+    </js-module>
+</platform>
+
 </plugin>
