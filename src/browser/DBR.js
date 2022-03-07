@@ -58,12 +58,29 @@ async function outputSettingsToString(success, error){
     error();
 }
 
+async function outputSettingsToString(success, error){
+    if (reader) {
+        let settings = await reader.outputSettingsToString();
+        success(settings);  
+    }
+    error();
+}
+
+async function destroy(success,error) {
+    if (reader) {
+        await reader.destroyContext();
+        reader = undefined;
+        success();
+    }
+    error();
+}
 
 module.exports = {
     init: init,
     decode: decode,
     initRuntimeSettingsWithString: initRuntimeSettingsWithString,
     outputSettingsToString: outputSettingsToString,
+    destroy: destroy,
     cleanup: function () {}
 };
 
