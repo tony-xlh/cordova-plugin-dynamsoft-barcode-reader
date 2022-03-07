@@ -27,6 +27,7 @@ async function decode(success, error, args){
         let results = await reader.decodeBase64String(base64);
         for (var i=0;i<results.length;i++){
           let result = results[i];
+          result.barcodeFormat = result.barcodeFormatString;
           result.x1 = result.localizationResult.x1;
           result.x2 = result.localizationResult.x2;
           result.x3 = result.localizationResult.x3;
