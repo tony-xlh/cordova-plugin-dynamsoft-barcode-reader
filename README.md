@@ -20,7 +20,7 @@ $ cordova plugins add cordova-plugin-dynamsoft-barcode-reader
 Or:
 
 ```
-$ cordova plugins add https://github.com/cordova-plugin-dynamsoft-barcode-reader
+$ cordova plugins add https://github.com/xulihang/cordova-plugin-dynamsoft-barcode-reader.git
 ```
 
 ### Methods
