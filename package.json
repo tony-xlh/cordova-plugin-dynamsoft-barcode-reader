@@ -1,28 +1,4 @@
 {
-  "_from": "cordova-plugin-dynamsoft-barcode-reader",
-  "_id": "cordova-plugin-dynamsoft-barcode-reader@0.0.4",
-  "_inBundle": false,
-  "_integrity": "sha512-OEIgW3o3qUN1qMACVb0MNA0GN5TzsBFp5yX4nTyuYYYMY0xQl68LQD4v7kXQn6fbR9UGCn0hB/NTAsXsqggtdQ==",
-  "_location": "/cordova-plugin-dynamsoft-barcode-reader",
-  "_phantomChildren": {},
-  "_requested": {
-    "type": "tag",
-    "registry": true,
-    "raw": "cordova-plugin-dynamsoft-barcode-reader",
-    "name": "cordova-plugin-dynamsoft-barcode-reader",
-    "escapedName": "cordova-plugin-dynamsoft-barcode-reader",
-    "rawSpec": "",
-    "saveSpec": null,
-    "fetchSpec": "latest"
-  },
-  "_requiredBy": [
-    "#DEV:/",
-    "#USER"
-  ],
-  "_resolved": "https://registry.npmmirror.com/cordova-plugin-dynamsoft-barcode-reader/-/cordova-plugin-dynamsoft-barcode-reader-0.0.4.tgz",
-  "_shasum": "b9646e9ef9ca209b4b2064defeb3df03099ff569",
-  "_spec": "cordova-plugin-dynamsoft-barcode-reader",
-  "_where": "F:\\cordova\\Reader",
   "author": {
     "name": "Xu Lihang"
   },
