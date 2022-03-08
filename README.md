@@ -14,13 +14,13 @@
 ### Install the plugin
 
 ```
-$ cordova plugins install cordova-plugin-dynamsoft-barcode-reader
+$ cordova plugins add cordova-plugin-dynamsoft-barcode-reader
 ```
 
 Or:
 
 ```
-$ cordova plugins install https://github.com/cordova-plugin-dynamsoft-barcode-reader
+$ cordova plugins add https://github.com/cordova-plugin-dynamsoft-barcode-reader
 ```
 
 ### Methods
@@ -84,6 +84,49 @@ $ cordova plugins install https://github.com/cordova-plugin-dynamsoft-barcode-re
     ```js
     cordova.plugins.DBR.outputSettingsToString(onOutput);
     ```
+
+*  `startScanning`
+
+    Open the camera using Dynamsoft Camera Enhancer and decode frames. 
+
+    ```js
+    cordova.plugins.DBR.startScanning(dceLicense, onScanned, error);
+    ```
+
+    The `onScanned` callback will return the frame resolution and barcode results.
+
+*  `stopScanning`
+
+    Close the camera.
+
+    ```js
+    cordova.plugins.DBR.stopScanning(success, error);
+    ```
+
+*  `pauseScanning`
+
+    Pause the camera.
+
+    ```js
+    cordova.plugins.DBR.pauseScanning(success, error);
+    ```
+
+*  `resumeScanning`
+
+    Resume the camera.
+
+    ```js
+    cordova.plugins.DBR.resumeScanning(success, error);
+    ```
+
+*  `switchTorch`
+
+    Turn on/off the torch. Value of desiredStatus: `on`, `off`.
+
+    ```js
+    cordova.plugins.DBR.switchTorch(desiredStatus, success, error);
+    ```
+
 
 ## Supported Barcode Symbologies
 
