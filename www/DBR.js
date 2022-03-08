@@ -50,3 +50,7 @@ exports.getResolution = function (success, error) {
     exec(success, error, 'DBR', 'getResolution', []);
 };
 
+exports.switchTorch = function (arg0, success, error) {
+    exec(success, error, 'DBR', 'switchTorch', [arg0]);
+};
+

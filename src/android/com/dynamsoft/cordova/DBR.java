@@ -132,6 +132,20 @@ public class DBR extends CordovaPlugin {
         }else if (action.equals("getResolution")){
             getResolution(callbackContext);
             return true;
+        }else if (action.equals("switchTorch")){
+            String desiredStatus = args.getString(0);
+            Log.d("DBR", "desired status: "+desiredStatus);
+            try{
+                if (desiredStatus.equals("on")){
+                    mCameraEnhancer.turnOnTorch();
+                }else{
+                    mCameraEnhancer.turnOffTorch();
+                }
+            }catch (Exception e) {
+                callbackContext.error(e.getMessage());
+            }
+            callbackContext.success();
+            return true;
         }
         return false;
     }
@@ -331,4 +345,28 @@ public class DBR extends CordovaPlugin {
         }
     }
 
+    @Override
+    public void onPause(boolean multitasking){
+        if (mCameraEnhancer != null) {
+            try {
+                Log.d("DBR","pause");
+                mCameraEnhancer.close();
+            } catch (CameraEnhancerException e) {
+                e.printStackTrace();
+            }
+        }
+        super.onPause(multitasking);
+    }
+    @Override
+    public void onResume(boolean multitasking){
+        if (mCameraEnhancer != null) {
+            try {
+                Log.d("DBR","resume");
+                mCameraEnhancer.open();
+            } catch (CameraEnhancerException e) {
+                e.printStackTrace();
+            }
+        }
+        super.onResume(multitasking);
+    }
 }
