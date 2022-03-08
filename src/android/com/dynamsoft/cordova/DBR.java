@@ -1,8 +1,16 @@
 package com.dynamsoft.cordova;
 
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
 
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,15 +18,27 @@ import org.json.JSONObject;
 import com.dynamsoft.dbr.BarcodeReader;
 import com.dynamsoft.dbr.BarcodeReaderException;
 import com.dynamsoft.dbr.DBRDLSLicenseVerificationListener;
+
 import com.dynamsoft.dbr.DMDLSConnectionParameters;
 import com.dynamsoft.dbr.EnumConflictMode;
+
 import com.dynamsoft.dbr.TextResult;
+import com.dynamsoft.dce.CameraEnhancer;
+import com.dynamsoft.dce.CameraEnhancerException;
+import com.dynamsoft.dce.DCECameraView;
+import com.dynamsoft.dce.DCEFrame;
+import com.dynamsoft.dce.DCEFrameListener;
+import com.dynamsoft.dce.DCELicenseVerificationListener;
+
 
 /**
  * This class echoes a string called from JavaScript.
  */
 public class DBR extends CordovaPlugin {
     private BarcodeReader barcodeReader;
+    private CameraEnhancer mCameraEnhancer = null;
+    private DCECameraView mCameraView = null;
+    private CallbackContext startCameraCallbackContext;
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if (action.equals("init")) {
@@ -55,11 +75,56 @@ public class DBR extends CordovaPlugin {
             return true;
         }else if (action.equals("destroy")) {
             try{
+                startCameraCallbackContext = null;
                 barcodeReader.destroy();
                 callbackContext.success();
             } catch (Exception e) {
                 e.printStackTrace();
                 callbackContext.error(e.getMessage());
+            }
+            return true;
+        }else if (action.equals("startScanning")) {
+            String dceLicense = args.getString(0);
+            try{
+                startScanning(dceLicense, callbackContext);
+            } catch (Exception e) {
+                e.printStackTrace();
+                callbackContext.error(e.getMessage());
+            }
+            return true;
+        }else if (action.equals("stopScanning")) {
+            try{
+                stopScanning();
+                callbackContext.success();
+            } catch (Exception e) {
+                e.printStackTrace();
+                callbackContext.error(e.getMessage());
+            }
+            return true;
+        }else if (action.equals("pauseScanning")) {
+            if (mCameraEnhancer != null) {
+                try {
+                    mCameraEnhancer.pause();
+                    callbackContext.success();
+                } catch (CameraEnhancerException e) {
+                    e.printStackTrace();
+                    callbackContext.error(e.getMessage());
+                }
+            }else{
+                callbackContext.error("not started");
+            }
+            return true;
+        }else if (action.equals("resumeScanning")) {
+            if (mCameraEnhancer != null) {
+                try {
+                    mCameraEnhancer.resume();
+                    callbackContext.success();
+                } catch (CameraEnhancerException e) {
+                    e.printStackTrace();
+                    callbackContext.error(e.getMessage());
+                }
+            }else{
+                callbackContext.error("not started");
             }
             return true;
         }
@@ -116,10 +181,13 @@ public class DBR extends CordovaPlugin {
     }
     
     private JSONArray decodeBase64(String base64) throws BarcodeReaderException, JSONException {
-        JSONArray decodingResults = new JSONArray();
         TextResult[] results = barcodeReader.decodeBase64String(base64, "");
-        for (TextResult result : results) {
+        return wrapResults(results);
+    }
 
+    private JSONArray wrapResults(TextResult[] results) throws JSONException {
+        JSONArray decodingResults = new JSONArray();
+        for (TextResult result : results) {
             JSONObject decodingResult = new JSONObject();
             decodingResult.put("barcodeText", result.barcodeText);
             decodingResult.put("barcodeFormat", result.barcodeFormatString);
@@ -135,5 +203,107 @@ public class DBR extends CordovaPlugin {
         }
         return decodingResults;
     }
-    
+
+    private void startScanning(String license, CallbackContext callbackContext){
+        startCameraCallbackContext = callbackContext;
+        if (mCameraEnhancer == null) {
+            Log.d("DBR","start scanning");
+            initDCEAndStartScanning(license);
+        } else{
+            cordova.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    makeWebViewTransparent();
+                    try {
+                        mCameraEnhancer.open();
+                    } catch (CameraEnhancerException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
+
+    private void stopScanning() throws Exception {
+        if (mCameraEnhancer != null) {
+            mCameraEnhancer.close();
+            cordova.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    restoreWebViewBackground();
+                }
+            });
+        } else{
+            throw new Exception("not started");
+        }
+    }
+
+    private void initDCEAndStartScanning(String license){
+        if (!license.equals("")) {
+            CameraEnhancer.initLicense(license, new DCELicenseVerificationListener() {
+                @Override
+                public void DCELicenseVerificationCallback(boolean isSuccess, Exception error) {
+                    if(!isSuccess){
+                        error.printStackTrace();
+                    }
+                }
+            });
+        }
+
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mCameraEnhancer = new CameraEnhancer(cordova.getActivity());
+                mCameraView = new DCECameraView(cordova.getActivity());
+                mCameraEnhancer.setCameraView(mCameraView);
+                mCameraView.setOverlayVisible(true);
+                FrameLayout.LayoutParams cameraPreviewParams = new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.WRAP_CONTENT,
+                        FrameLayout.LayoutParams.WRAP_CONTENT
+                );
+                View view = webView.getView();
+                ((ViewGroup) view.getParent()).addView(mCameraView,cameraPreviewParams);
+                view.bringToFront();
+                makeWebViewTransparent();
+                bindDBRandDCE();
+                try {
+                    mCameraEnhancer.open();
+                } catch (CameraEnhancerException e) {
+                    Log.d("DBR",e.getMessage());
+                }
+            }
+        });
+
+    }
+
+    private void bindDBRandDCE(){
+        DCEFrameListener listener = new DCEFrameListener(){
+            @Override
+            public void frameOutputCallback(DCEFrame frame, long timeStamp) {
+                //perform custom action on generated frame
+                try {
+                    TextResult[] textResults = barcodeReader.decodeBuffer(frame.getImageData(),frame.getWidth(),frame.getHeight(),frame.getStrides()[0], frame.getPixelFormat(),"");
+                    Log.d("DBR","Found "+textResults.length+" barcode(s).");
+                    PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, wrapResults(textResults));
+                    pluginResult.setKeepCallback(true);
+                    startCameraCallbackContext.sendPluginResult(pluginResult);
+                } catch (JSONException | BarcodeReaderException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        mCameraEnhancer.addListener(listener);
+    }
+
+    private void makeWebViewTransparent(){
+        View view = webView.getView();
+        view.setTag(view.getBackground());
+        view.setBackgroundColor(Color.TRANSPARENT);
+    }
+
+    private void restoreWebViewBackground(){
+        View view = webView.getView();
+        view.setBackground((Drawable) view.getTag());
+    }
+
 }
