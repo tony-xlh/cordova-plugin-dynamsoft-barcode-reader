@@ -53,6 +53,15 @@ public class DBR extends CordovaPlugin {
                 callbackContext.error(e.getMessage());
             }
             return true;
+        }else if (action.equals("destroy")) {
+            try{
+                barcodeReader.destroy();
+                callbackContext.success();
+            } catch (Exception e) {
+                e.printStackTrace();
+                callbackContext.error(e.getMessage());
+            }
+            return true;
         }
         return false;
     }

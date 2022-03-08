@@ -11,6 +11,10 @@ exports.init = function (arg0, success, error) {
     exec(success, error, 'DBR', 'init', [arg0]);
 };
 
+exports.destroy = function (success, error) {
+    exec(success, error, 'DBR', 'destroy', []);
+};
+
 exports.initWithOrganizationID = function (arg0, success, error) {
     exec(success, error, 'DBR', 'initWithOrganizationID', [arg0]);
 };
