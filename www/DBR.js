@@ -11,6 +11,18 @@ exports.init = function (arg0, success, error) {
     exec(success, error, 'DBR', 'init', [arg0]);
 };
 
+exports.initWithOrganizationID = function (arg0, success, error) {
+    exec(success, error, 'DBR', 'initWithOrganizationID', [arg0]);
+};
+
+exports.initRuntimeSettingsWithString = function (arg0, success, error) {
+    exec(success, error, 'DBR', 'initRuntimeSettingsWithString', [arg0]);
+};
+
+exports.outputSettingsToString = function (success, error) {
+    exec(success, error, 'DBR', 'outputSettingsToString', []);
+};
+
 exports.destroy = function (success, error) {
     exec(success, error, 'DBR', 'destroy', []);
 };
@@ -34,14 +46,7 @@ exports.resumeScanning = function (success, error) {
     exec(success, error, 'DBR', 'resumeScanning', []);
 };
 
-exports.initWithOrganizationID = function (arg0, success, error) {
-    exec(success, error, 'DBR', 'initWithOrganizationID', [arg0]);
+exports.getResolution = function (success, error) {
+    exec(success, error, 'DBR', 'getResolution', []);
 };
 
-exports.initRuntimeSettingsWithString = function (arg0, success, error) {
-    exec(success, error, 'DBR', 'initRuntimeSettingsWithString', [arg0]);
-};
-
-exports.outputSettingsToString = function (success, error) {
-    exec(success, error, 'DBR', 'outputSettingsToString', []);
-};

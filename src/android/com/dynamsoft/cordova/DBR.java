@@ -1,5 +1,6 @@
 package com.dynamsoft.cordova;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -29,6 +30,7 @@ import com.dynamsoft.dce.DCECameraView;
 import com.dynamsoft.dce.DCEFrame;
 import com.dynamsoft.dce.DCEFrameListener;
 import com.dynamsoft.dce.DCELicenseVerificationListener;
+import com.dynamsoft.dce.EnumResolution;
 
 
 /**
@@ -126,6 +128,9 @@ public class DBR extends CordovaPlugin {
             }else{
                 callbackContext.error("not started");
             }
+            return true;
+        }else if (action.equals("getResolution")){
+            getResolution(callbackContext);
             return true;
         }
         return false;
@@ -267,24 +272,28 @@ public class DBR extends CordovaPlugin {
                 makeWebViewTransparent();
                 bindDBRandDCE();
                 try {
+                    mCameraEnhancer.setResolution(EnumResolution.RESOLUTION_720P); //default resolution is 720P
                     mCameraEnhancer.open();
                 } catch (CameraEnhancerException e) {
                     Log.d("DBR",e.getMessage());
                 }
             }
         });
-
     }
 
     private void bindDBRandDCE(){
         DCEFrameListener listener = new DCEFrameListener(){
             @Override
             public void frameOutputCallback(DCEFrame frame, long timeStamp) {
-                //perform custom action on generated frame
                 try {
-                    TextResult[] textResults = barcodeReader.decodeBuffer(frame.getImageData(),frame.getWidth(),frame.getHeight(),frame.getStrides()[0], frame.getPixelFormat(),"");
+                    Bitmap rotatedBitmap = BitmapUtils.rotateBitmap(frame.toBitmap(),frame.getOrientation(),false,false);
+                    TextResult[] textResults = barcodeReader.decodeBufferedImage(rotatedBitmap,"");
                     Log.d("DBR","Found "+textResults.length+" barcode(s).");
-                    PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, wrapResults(textResults));
+                    JSONObject scanResult = new JSONObject();
+                    scanResult.put("frameWidth",rotatedBitmap.getWidth());
+                    scanResult.put("frameHeight",rotatedBitmap.getHeight());
+                    scanResult.put("results",wrapResults(textResults));
+                    PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, scanResult);
                     pluginResult.setKeepCallback(true);
                     startCameraCallbackContext.sendPluginResult(pluginResult);
                 } catch (JSONException | BarcodeReaderException e) {
@@ -304,6 +313,22 @@ public class DBR extends CordovaPlugin {
     private void restoreWebViewBackground(){
         View view = webView.getView();
         view.setBackground((Drawable) view.getTag());
+    }
+
+    private void getResolution(CallbackContext callbackContext){
+        if (mCameraEnhancer != null){
+            try {
+                JSONObject res = new JSONObject();
+                res.put("width",mCameraEnhancer.getResolution().getWidth());
+                res.put("height",mCameraEnhancer.getResolution().getHeight());
+                callbackContext.success(res);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                callbackContext.error(e.getMessage());
+            }
+        }else{
+            callbackContext.error("not started");
+        }
     }
 
 }
