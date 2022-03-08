@@ -15,6 +15,25 @@ exports.destroy = function (success, error) {
     exec(success, error, 'DBR', 'destroy', []);
 };
 
+exports.startScanning = function (arg0, onScanned, error) {
+    if (!arg0){
+        arg0="DLS2eyJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSJ9";
+    }
+    exec(onScanned, error, 'DBR', 'startScanning', [arg0]);
+};
+
+exports.stopScanning = function (success, error) {
+    exec(success, error, 'DBR', 'stopScanning', []);
+};
+
+exports.pauseScanning = function (success, error) {
+    exec(success, error, 'DBR', 'pauseScanning', []);
+};
+
+exports.resumeScanning = function (success, error) {
+    exec(success, error, 'DBR', 'resumeScanning', []);
+};
+
 exports.initWithOrganizationID = function (arg0, success, error) {
     exec(success, error, 'DBR', 'initWithOrganizationID', [arg0]);
 };
