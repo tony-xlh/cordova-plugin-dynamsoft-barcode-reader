@@ -12,12 +12,12 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 @property (nonatomic, retain) DynamsoftBarcodeReader* barcodeReader;
 @property (nonatomic, strong) DynamsoftCameraEnhancer *dce;
 @property (nonatomic, strong) DCECameraView *dceView;
-@property Boolean initialized;
 @property Boolean decoding;
 @property NSString* scanCallbackId;
 - (void)init:(CDVInvokedUrlCommand*)command;
 - (void)initWithOrganizationID:(CDVInvokedUrlCommand*)command;
 - (void)decode:(CDVInvokedUrlCommand*)command;
+- (void)destroy:(CDVInvokedUrlCommand*)command;
 - (void)initRuntimeSettingsWithString:(CDVInvokedUrlCommand*)command;
 - (void)outputSettingsToString:(CDVInvokedUrlCommand*)command;
 - (void)startScanning:(CDVInvokedUrlCommand*)command;
@@ -25,6 +25,7 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 - (void)pauseScanning:(CDVInvokedUrlCommand*)command;
 - (void)resumeScanning:(CDVInvokedUrlCommand*)command;
 - (void)switchTorch:(CDVInvokedUrlCommand*)command;
+- (void)getResolution:(CDVInvokedUrlCommand*)command;
 @end
 
 @implementation DBR
@@ -57,6 +58,21 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
         [[self commandDelegate] sendPluginResult:result callbackId:command.callbackId];
     }];
     
+}
+
+- (void)destroy:(CDVInvokedUrlCommand*)command
+{
+    CDVPluginResult* result;
+    if (_barcodeReader != nil) {
+        [_barcodeReader dispose];
+        result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK];
+    }else{
+        result = [CDVPluginResult
+                       resultWithStatus: CDVCommandStatus_ERROR
+                       messageAsString: @"not initialized"
+                       ];
+    }
+    [[self commandDelegate] sendPluginResult:result callbackId:command.callbackId];
 }
 
 - (void)decode:(CDVInvokedUrlCommand*)command
@@ -102,17 +118,16 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 }
 
 - (void)initDBR: (NSString*) license{
-    if (_initialized==false){
+    if (_barcodeReader == nil){
         NSLog(@"%s", "Initializing dbr");
         _barcodeReader = [[DynamsoftBarcodeReader alloc] initWithLicense:license];
-        _initialized = true;
     }else{
         NSLog(@"%s", "Already initialized.");
     }
 }
 
 - (void)initDBRWithOrganizationID: (NSString*) organizationID{
-    if (_initialized==false){
+    if (_barcodeReader == nil){
         NSLog(@"%s", "Initializing dbr with organization id");
         iDMDLSConnectionParameters* dls = [[iDMDLSConnectionParameters alloc] init];
         // Initialize license for Dynamsoft Barcode Reader.
@@ -121,14 +136,13 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
         // You can also request a 30-day trial license in the customer portal: https://www.dynamsoft.com/customer/license/trialLicense?product=dbr&utm_source=installer&package=ios
         dls.organizationID = organizationID;
         _barcodeReader = [[DynamsoftBarcodeReader alloc] initLicenseFromDLS:dls verificationDelegate:self];
-        _initialized = true;
     }else{
         NSLog(@"%s", "Already initialized.");
     }
 }
 
 - (NSArray<NSDictionary*>*)decodeBase64: (NSString*) base64 {
-    if (_initialized==true && _decoding==false){
+    if (_barcodeReader != nil && _decoding==false){
         @try {
             NSLog(@"Decoding...");
             _decoding=true;
@@ -196,6 +210,7 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
     CDVPluginResult* result;
     if (_dce != nil) {
         [_dce close];
+        [self restoreWebViewBackground];
         result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK];
     }else{
         result = [CDVPluginResult
@@ -247,6 +262,21 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
             [_dce turnOffTorch];
         }
         result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK];
+    }else{
+        result = [CDVPluginResult
+                       resultWithStatus: CDVCommandStatus_ERROR
+                       messageAsString: @"not started"
+                       ];
+    }
+    [[self commandDelegate] sendPluginResult:result callbackId:command.callbackId];
+}
+
+- (void)getResolution:(CDVInvokedUrlCommand *)command
+{
+    CDVPluginResult* result;
+    if (_dce != nil) {
+        NSString* resolution = [_dce getResolution];
+        result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString: resolution];
     }else{
         result = [CDVPluginResult
                        resultWithStatus: CDVCommandStatus_ERROR
