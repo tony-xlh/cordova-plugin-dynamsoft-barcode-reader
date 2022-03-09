@@ -84,6 +84,14 @@ $ cordova plugins add https://github.com/xulihang/cordova-plugin-dynamsoft-barco
     ```js
     cordova.plugins.DBR.outputSettingsToString(onOutput);
     ```
+    
+*  `destroy`
+
+    Destroy the current instance of Dynamsoft Barcode Reader.
+
+    ```js
+    cordova.plugins.DBR.destroy(success, error);
+    ```
 
 *  `startScanning`
 
