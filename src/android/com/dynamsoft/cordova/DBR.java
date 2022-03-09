@@ -275,7 +275,7 @@ public class DBR extends CordovaPlugin {
                 mCameraEnhancer = new CameraEnhancer(cordova.getActivity());
                 mCameraView = new DCECameraView(cordova.getActivity());
                 mCameraEnhancer.setCameraView(mCameraView);
-                mCameraView.setOverlayVisible(true);
+
                 FrameLayout.LayoutParams cameraPreviewParams = new FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.WRAP_CONTENT,
                         FrameLayout.LayoutParams.WRAP_CONTENT
