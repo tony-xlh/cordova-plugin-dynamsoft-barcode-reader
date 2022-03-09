@@ -127,6 +127,14 @@ $ cordova plugins add https://github.com/xulihang/cordova-plugin-dynamsoft-barco
     cordova.plugins.DBR.switchTorch(desiredStatus, success, error);
     ```
 
+*  `getResolution`
+
+    Get the current video resolution in format like this: `1280x720`.
+
+    ```js
+    cordova.plugins.DBR.getResolution(success, error);
+    ```
+
 
 ## Supported Barcode Symbologies
 
