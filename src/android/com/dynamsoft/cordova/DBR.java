@@ -331,16 +331,8 @@ public class DBR extends CordovaPlugin {
 
     private void getResolution(CallbackContext callbackContext){
         if (mCameraEnhancer != null){
-            try {
-                JSONObject res = new JSONObject();
-                res.put("width",mCameraEnhancer.getResolution().getWidth());
-                res.put("height",mCameraEnhancer.getResolution().getHeight());
-                callbackContext.success(res);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                callbackContext.error(e.getMessage());
-            }
-        }else{
+            callbackContext.success(mCameraEnhancer.getResolution().getWidth()+"x"+mCameraEnhancer.getResolution().getHeight());
+       }else{
             callbackContext.error("not started");
         }
     }
