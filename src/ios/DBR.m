@@ -7,7 +7,7 @@
 
 CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 
-@interface DBR: CDVPlugin<DCELicenseVerificationListener, DCEFrameListener>
+@interface DBR: CDVPlugin<DBRLicenseVerificationListener, DCELicenseVerificationListener, DCEFrameListener>
   // Member variables go here.
 @property (nonatomic, retain) DynamsoftBarcodeReader* barcodeReader;
 @property (nonatomic, strong) DynamsoftCameraEnhancer *dce;
@@ -15,7 +15,6 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 @property Boolean decoding;
 @property NSString* scanCallbackId;
 - (void)init:(CDVInvokedUrlCommand*)command;
-- (void)initWithOrganizationID:(CDVInvokedUrlCommand*)command;
 - (void)decode:(CDVInvokedUrlCommand*)command;
 - (void)destroy:(CDVInvokedUrlCommand*)command;
 - (void)initRuntimeSettingsWithString:(CDVInvokedUrlCommand*)command;
@@ -40,21 +39,6 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
                                        messageAsString: self->_barcodeReader.getVersion
                                        ];
 
-        [[self commandDelegate] sendPluginResult:result callbackId:command.callbackId];
-    }];
-    
-}
-
-- (void)initWithOrganizationID:(CDVInvokedUrlCommand*)command
-{
-    [self.commandDelegate runInBackground:^{
-        NSString* organizationID = [command.arguments objectAtIndex:0];
-        [self initDBRWithOrganizationID: organizationID];
-        CDVPluginResult* result = [CDVPluginResult
-                                       resultWithStatus: CDVCommandStatus_OK
-                                   messageAsString: self->_barcodeReader.getVersion
-                                       ];
-            
         [[self commandDelegate] sendPluginResult:result callbackId:command.callbackId];
     }];
     
@@ -120,26 +104,13 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 - (void)initDBR: (NSString*) license{
     if (_barcodeReader == nil){
         NSLog(@"%s", "Initializing dbr");
-        _barcodeReader = [[DynamsoftBarcodeReader alloc] initWithLicense:license];
+        [DynamsoftBarcodeReader initLicense:@"DLS2eyJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSJ9" verificationDelegate:self];
+        _barcodeReader = [[DynamsoftBarcodeReader alloc] init];
     }else{
         NSLog(@"%s", "Already initialized.");
     }
 }
 
-- (void)initDBRWithOrganizationID: (NSString*) organizationID{
-    if (_barcodeReader == nil){
-        NSLog(@"%s", "Initializing dbr with organization id");
-        iDMDLSConnectionParameters* dls = [[iDMDLSConnectionParameters alloc] init];
-        // Initialize license for Dynamsoft Barcode Reader.
-        // The organization id 200001 here will grant you a public trial license good for 7 days. Note that network connection is required for this license to work.
-        // If you want to use an offline license, please contact Dynamsoft Support: https://www.dynamsoft.com/company/contact/
-        // You can also request a 30-day trial license in the customer portal: https://www.dynamsoft.com/customer/license/trialLicense?product=dbr&utm_source=installer&package=ios
-        dls.organizationID = organizationID;
-        _barcodeReader = [[DynamsoftBarcodeReader alloc] initLicenseFromDLS:dls verificationDelegate:self];
-    }else{
-        NSLog(@"%s", "Already initialized.");
-    }
-}
 
 - (NSArray<NSDictionary*>*)decodeBase64: (NSString*) base64 {
     if (_barcodeReader != nil && _decoding==false){
@@ -147,7 +118,7 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
             NSLog(@"Decoding...");
             _decoding=true;
             NSError __autoreleasing * _Nullable error;
-            NSArray<iTextResult*>* results = [_barcodeReader decodeBase64:base64 withTemplate:@"" error:&error];
+            NSArray<iTextResult*>* results = [_barcodeReader decodeBase64:base64 error:&error];
             _decoding=false;
             NSArray<NSDictionary*> * resultsArray = [self wrapResults:results];
             return resultsArray;
@@ -304,7 +275,7 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
     UIImage *image = [frame toUIImage];
     UIImage *rotatedImage = [self imageRotatedByDegrees:frame.orientation image:image];
 
-    NSArray<iTextResult*>* results = [_barcodeReader decodeImage:rotatedImage withTemplate:@"" error:&error];
+    NSArray<iTextResult*>* results = [_barcodeReader decodeImage:rotatedImage error:&error];
     NSArray<NSDictionary*> * resultsArray = [self wrapResults:results];
     
     NSDictionary *dictionary = @{
@@ -358,6 +329,11 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 
 }
 
+- (void)DBRLicenseVerificationCallback:(bool)isSuccess error:(NSError * _Nullable)error {
+
+}
+
+
 - (void) makeWebViewTransparent {
     [self.webView setOpaque:false];
     [self.webView setBackgroundColor:UIColor.clearColor];
@@ -369,4 +345,5 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
     [self.webView setBackgroundColor:UIColor.whiteColor];
     [self.webView.scrollView setBackgroundColor:UIColor.whiteColor];
 }
+
 @end
