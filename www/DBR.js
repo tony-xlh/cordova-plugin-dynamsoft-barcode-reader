@@ -6,13 +6,9 @@ exports.decode = function (arg0, success, error) {
 
 exports.init = function (arg0, success, error) {
     if (!arg0){
-        arg0="200001";
+        arg0="DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTcGR6Vm05WDJrcEQ5YUoifQ==";
     }
     exec(success, error, 'DBR', 'init', [arg0]);
-};
-
-exports.initWithOrganizationID = function (arg0, success, error) {
-    exec(success, error, 'DBR', 'initWithOrganizationID', [arg0]);
 };
 
 exports.initRuntimeSettingsWithString = function (arg0, success, error) {
@@ -29,7 +25,7 @@ exports.destroy = function (success, error) {
 
 exports.startScanning = function (arg0, onScanned, error) {
     if (!arg0){
-        arg0="DLS2eyJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSJ9";
+        arg0="DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTcGR6Vm05WDJrcEQ5YUoifQ==";
     }
     exec(onScanned, error, 'DBR', 'startScanning', [arg0]);
 };

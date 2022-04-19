@@ -18,9 +18,8 @@ import org.json.JSONObject;
 
 import com.dynamsoft.dbr.BarcodeReader;
 import com.dynamsoft.dbr.BarcodeReaderException;
-import com.dynamsoft.dbr.DBRDLSLicenseVerificationListener;
 
-import com.dynamsoft.dbr.DMDLSConnectionParameters;
+import com.dynamsoft.dbr.DBRLicenseVerificationListener;
 import com.dynamsoft.dbr.EnumConflictMode;
 
 import com.dynamsoft.dbr.TextResult;
@@ -46,10 +45,6 @@ public class DBR extends CordovaPlugin {
         if (action.equals("init")) {
             String message = args.getString(0);
             this.init(message, callbackContext);
-            return true;
-        }else if (action.equals("initWithOrganizationID")) {
-            String message = args.getString(0);
-            this.initWithOrganizationID(message, callbackContext);
             return true;
         }else if (action.equals("decode")) {
             String message = args.getString(0);
@@ -151,38 +146,21 @@ public class DBR extends CordovaPlugin {
     }
 
     private void init(String license, CallbackContext callbackContext) {
-        try {
-            barcodeReader = new BarcodeReader();
-            barcodeReader.initLicense(license);
-            callbackContext.success();
-        } catch (BarcodeReaderException e) {
-            e.printStackTrace();
-            callbackContext.error(e.getMessage());
-        }
-    }
-
-    private void initWithOrganizationID(String organizationID, CallbackContext callbackContext) {
-        try {
-            initDBRWithOrganizationID(organizationID);
-            callbackContext.success();
-        } catch (BarcodeReaderException e) {
-            e.printStackTrace();
-            callbackContext.error(e.getMessage());
-        }
-    }
-
-    private void initDBRWithOrganizationID(String organizationID) throws BarcodeReaderException {
-        barcodeReader = new BarcodeReader();
-        DMDLSConnectionParameters dbrParameters = new DMDLSConnectionParameters();
-        dbrParameters.organizationID = organizationID;
-        barcodeReader.initLicenseFromDLS(dbrParameters, new DBRDLSLicenseVerificationListener() {
+        BarcodeReader.initLicense(license, new DBRLicenseVerificationListener() {
             @Override
-            public void DLSLicenseVerificationCallback(boolean isSuccessful, Exception e) {
+            public void DBRLicenseVerificationCallback(boolean isSuccessful, Exception e) {
                 if (!isSuccessful) {
                     e.printStackTrace();
                 }
             }
         });
+        try {
+            barcodeReader = new BarcodeReader();
+            callbackContext.success();
+        } catch (BarcodeReaderException e) {
+            e.printStackTrace();
+            callbackContext.error(e.getMessage());
+        }
     }
 
     private void decode(String base64, CallbackContext callbackContext) {
@@ -200,7 +178,7 @@ public class DBR extends CordovaPlugin {
     }
     
     private JSONArray decodeBase64(String base64) throws BarcodeReaderException, JSONException {
-        TextResult[] results = barcodeReader.decodeBase64String(base64, "");
+        TextResult[] results = barcodeReader.decodeBase64String(base64);
         return wrapResults(results);
     }
 
@@ -301,7 +279,7 @@ public class DBR extends CordovaPlugin {
             public void frameOutputCallback(DCEFrame frame, long timeStamp) {
                 try {
                     Bitmap rotatedBitmap = BitmapUtils.rotateBitmap(frame.toBitmap(),frame.getOrientation(),false,false);
-                    TextResult[] textResults = barcodeReader.decodeBufferedImage(rotatedBitmap,"");
+                    TextResult[] textResults = barcodeReader.decodeBufferedImage(rotatedBitmap);
                     Log.d("DBR","Found "+textResults.length+" barcode(s).");
                     JSONObject scanResult = new JSONObject();
                     scanResult.put("frameWidth",rotatedBitmap.getWidth());
