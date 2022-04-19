@@ -143,9 +143,15 @@ $ cordova plugins add https://github.com/xulihang/cordova-plugin-dynamsoft-barco
     cordova.plugins.DBR.getResolution(success, error);
     ```
 
+## Versions
+
+For versions >= 1.2.0, Dynamsoft Barcode Reader 9.x is used.
+
+For versions < 1.2.0, Dynamsoft Barcode Reader 8.x is used.
 
 ## Supported Barcode Symbologies
 
+* Code 11
 * Code 39
 * Code 93
 * Code 128
@@ -168,6 +174,7 @@ $ cordova plugins add https://github.com/xulihang/cordova-plugin-dynamsoft-barco
 * GS1 Composite
 * Postal Code
 * Dot Code
+* PharmaCode
 
 ## How the plugin is made
 
