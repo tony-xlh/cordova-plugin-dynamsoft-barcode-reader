@@ -104,7 +104,7 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 - (void)initDBR: (NSString*) license{
     if (_barcodeReader == nil){
         NSLog(@"%s", "Initializing dbr");
-        [DynamsoftBarcodeReader initLicense:@"DLS2eyJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSJ9" verificationDelegate:self];
+        [DynamsoftBarcodeReader initLicense:license verificationDelegate:self];
         _barcodeReader = [[DynamsoftBarcodeReader alloc] init];
     }else{
         NSLog(@"%s", "Already initialized.");
