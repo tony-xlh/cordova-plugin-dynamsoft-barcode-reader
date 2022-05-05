@@ -22,7 +22,11 @@
 </feature>
 </config-file>
 <config-file parent="/*" target="AndroidManifest.xml"></config-file>
-<source-file src="src/android/com/dynamsoft/cordova/DBR.java" target-dir="src/com/dynamsoft/cordova" /><framework src="src/android/barcodereader.gradle" custom="true" type="gradleReference" /></platform>
+<source-file src="src/android/com/dynamsoft/cordova/DBR.java" target-dir="src/com/dynamsoft/cordova" />
+<source-file src="src/android/com/dynamsoft/cordova/BitmapUtils.java" target-dir="src/com/dynamsoft/cordova" />
+<framework src="src/android/barcodereader.gradle" custom="true" type="gradleReference" />
+
+</platform>
 
 <platform name="browser">
     <config-file target="config.xml" parent="/*">
