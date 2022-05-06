@@ -143,11 +143,11 @@ $ cordova plugins add https://github.com/xulihang/cordova-plugin-dynamsoft-barco
     cordova.plugins.DBR.getResolution(success, error);
     ```
 
-## Versions
+## License Versions
 
-For versions >= 1.2.0, Dynamsoft Barcode Reader 9.x is used.
+For versions >= 1.2.0, License 3 is used.
 
-For versions < 1.2.0, Dynamsoft Barcode Reader 8.x is used.
+For versions < 1.2.0, License 1 and 2 are used.
 
 ## Supported Barcode Symbologies
 
