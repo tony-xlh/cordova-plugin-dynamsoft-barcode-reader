@@ -7,7 +7,7 @@
 
 CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 
-@interface DBR: CDVPlugin<DBRLicenseVerificationListener, DCELicenseVerificationListener, DCEFrameListener>
+@interface DBR: CDVPlugin<DCELicenseVerificationListener, DCEFrameListener>
   // Member variables go here.
 @property (nonatomic, retain) DynamsoftBarcodeReader* barcodeReader;
 @property (nonatomic, strong) DynamsoftCameraEnhancer *dce;
@@ -33,7 +33,8 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 {
     [self.commandDelegate runInBackground:^{
         NSString* license = [command.arguments objectAtIndex:0];
-        [self initDBR: license];
+        NSString* orgID = [self getOrgIDFromLicense3:license];
+        [self initDBRWithOrganizationID: orgID];
         CDVPluginResult* result = [CDVPluginResult
                                        resultWithStatus: CDVCommandStatus_OK
                                        messageAsString: self->_barcodeReader.getVersion
@@ -42,6 +43,20 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
         [[self commandDelegate] sendPluginResult:result callbackId:command.callbackId];
     }];
     
+}
+
+- (NSString*) getOrgIDFromLicense3: (NSString*) license
+{
+    if ([license containsString:@"DLS2"] == false) {
+        NSLog(@"invalid license. use public trial");
+        license = @"DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTcGR6Vm05WDJrcEQ5YUoifQ==";
+    }
+    NSString * base64String = [license substringFromIndex:4];
+    NSData *data = [[NSData alloc] initWithBase64EncodedString:base64String options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    NSError __autoreleasing * _Nullable error;
+    NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+    NSString * orgID = dict[@"organizationID"];
+    return orgID;
 }
 
 - (void)destroy:(CDVInvokedUrlCommand*)command
@@ -101,11 +116,13 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
     [[self commandDelegate] sendPluginResult:result callbackId:command.callbackId];
 }
 
-- (void)initDBR: (NSString*) license{
+
+- (void)initDBRWithOrganizationID: (NSString*) organizationID{
     if (_barcodeReader == nil){
-        NSLog(@"%s", "Initializing dbr");
-        [DynamsoftBarcodeReader initLicense:license verificationDelegate:self];
-        _barcodeReader = [[DynamsoftBarcodeReader alloc] init];
+        NSLog(@"%s", "Initializing dbr with organization id");
+        iDMDLSConnectionParameters* dls = [[iDMDLSConnectionParameters alloc] init];
+        dls.organizationID = organizationID;
+        _barcodeReader = [[DynamsoftBarcodeReader alloc] initLicenseFromDLS:dls verificationDelegate:self];
     }else{
         NSLog(@"%s", "Already initialized.");
     }
@@ -118,7 +135,7 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
             NSLog(@"Decoding...");
             _decoding=true;
             NSError __autoreleasing * _Nullable error;
-            NSArray<iTextResult*>* results = [_barcodeReader decodeBase64:base64 error:&error];
+            NSArray<iTextResult*>* results = [_barcodeReader decodeBase64:base64 withTemplate:@"" error:&error];
             _decoding=false;
             NSArray<NSDictionary*> * resultsArray = [self wrapResults:results];
             return resultsArray;
@@ -169,11 +186,7 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
     _scanCallbackId = command.callbackId;
     [self makeWebViewTransparent];
     NSString* license = [command.arguments objectAtIndex:0];
-    if (self.dce == nil){
-        [self initDCEAndStart:license];
-    }else{
-        [self.dce open];
-    }
+    [self initDCEAndStart:license];
 }
 
 - (void)stopScanning:(CDVInvokedUrlCommand*)command
@@ -182,6 +195,7 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
     if (_dce != nil) {
         [_dce close];
         [self restoreWebViewBackground];
+        [_dceView removeFromSuperview];
         result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK];
     }else{
         result = [CDVPluginResult
@@ -261,9 +275,10 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 - (void)initDCEAndStart: (NSString*) license {
     NSLog(@"init dce");
     [DynamsoftCameraEnhancer initLicense:license verificationDelegate:self];
-    _dceView = [DCECameraView cameraWithFrame:self.webView.superview.bounds];
-    [self.webView.superview addSubview:_dceView];
-    [self.webView.superview bringSubviewToFront:self.webView];
+    _dceView = [DCECameraView cameraWithFrame:self.viewController.view.bounds];
+    [self.viewController.view addSubview:_dceView];
+    [self.viewController.view sendSubviewToBack:_dceView];
+    [self.viewController.view bringSubviewToFront:self.webView];
     _dce = [[DynamsoftCameraEnhancer alloc] initWithView:_dceView];
     [_dce setResolution:EnumRESOLUTION_720P];
     [_dce addListener:self];
@@ -275,7 +290,7 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
     UIImage *image = [frame toUIImage];
     UIImage *rotatedImage = [self imageRotatedByDegrees:frame.orientation image:image];
 
-    NSArray<iTextResult*>* results = [_barcodeReader decodeImage:rotatedImage error:&error];
+    NSArray<iTextResult*>* results = [_barcodeReader decodeImage:rotatedImage withTemplate:@"" error:&error];
     NSArray<NSDictionary*> * resultsArray = [self wrapResults:results];
     
     NSDictionary *dictionary = @{
