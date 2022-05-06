@@ -143,6 +143,10 @@ $ cordova plugins add https://github.com/xulihang/cordova-plugin-dynamsoft-barco
     cordova.plugins.DBR.getResolution(success, error);
     ```
 
+## Demo
+
+[Ionic React Barcode Scanner](https://github.com/xulihang/Ionic-React-Cordova-Barcode-Scanner)
+
 ## License Versions
 
 For versions >= 1.2.0, License 3 is used.
