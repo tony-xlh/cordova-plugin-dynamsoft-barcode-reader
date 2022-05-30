@@ -159,10 +159,11 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
         CGPoint p3 = [result.localizationResult.resultPoints[2] CGPointValue];
         CGPoint p4 = [result.localizationResult.resultPoints[3] CGPointValue];
         
-
+        NSString* base64String = [result.barcodeBytes base64EncodedStringWithOptions:0];
         NSDictionary *dictionary = @{
                @"barcodeText" : result.barcodeText,
                @"barcodeFormat" : result.barcodeFormatString,
+               @"barcodeBytesBase64" : base64String,
                @"x1" : @(p1.x),
                @"y1" : @(p1.y),
                @"x2" : @(p2.x),
