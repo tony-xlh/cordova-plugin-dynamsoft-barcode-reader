@@ -41,7 +41,7 @@ $ cordova plugins add https://github.com/xulihang/cordova-plugin-dynamsoft-barco
     cordova.plugins.DBR.decode(base64,successCallback,errorCallback);
     ```
     
-    A result object has the following properties: `barcodeText`, `barcodeFormat` and localization results: `x1`, `y1`, `x2`, `y2`, `x3`, `y3`, `x4`, `y4`.
+    A result object has the following properties: `barcodeText`, `barcodeBytesBase64` `barcodeFormat` and localization results: `x1`, `y1`, `x2`, `y2`, `x3`, `y3`, `x4`, `y4`.
     
 * `initRuntimeSettingsWithString`
     
@@ -146,6 +146,10 @@ $ cordova plugins add https://github.com/xulihang/cordova-plugin-dynamsoft-barco
 ## Demo
 
 [Ionic React Barcode Scanner](https://github.com/xulihang/Ionic-React-Cordova-Barcode-Scanner)
+
+## Ionic Wrapper
+
+[@awesome-cordova-plugins/dynamsoft-barcode-scanner](https://danielsogl.gitbook.io/awesome-cordova-plugins/dynamsoft-barcode-scanner)
 
 ## License Versions
 
