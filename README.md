@@ -98,7 +98,25 @@ $ cordova plugins add https://github.com/xulihang/cordova-plugin-dynamsoft-barco
     Open the camera using Dynamsoft Camera Enhancer and decode frames. 
 
     ```js
-    cordova.plugins.DBR.startScanning(dceLicense, onScanned, error);
+    cordova.plugins.DBR.startScanning({"dceLicense":"license","resolution":2}, onScanned, error);
+    ```
+    
+    The scan options:
+    
+    ```ts
+    interface ScanOptions {
+      dceLicense?: string;
+      resolution?: number; // check out the following enum of resolution
+    }
+    
+    enum EnumResolution {
+      RESOLUTION_AUTO = 0,
+      RESOLUTION_480P = 1,
+      RESOLUTION_720P = 2,
+      RESOLUTION_1080P = 3,
+      RESOLUTION_2K = 4,
+      RESOLUTION_4K = 5,
+    }
     ```
 
     The `onScanned` callback will return the frame resolution and barcode results.
