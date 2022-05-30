@@ -3,6 +3,7 @@ package com.dynamsoft.cordova;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -188,6 +189,7 @@ public class DBR extends CordovaPlugin {
             JSONObject decodingResult = new JSONObject();
             decodingResult.put("barcodeText", result.barcodeText);
             decodingResult.put("barcodeFormat", result.barcodeFormatString);
+            decodingResult.put("barcodeBytesBase64", Base64.encodeToString(result.barcodeBytes, Base64.DEFAULT));
             decodingResult.put("x1", result.localizationResult.resultPoints[0].x);
             decodingResult.put("y1", result.localizationResult.resultPoints[0].y);
             decodingResult.put("x2", result.localizationResult.resultPoints[1].x);
