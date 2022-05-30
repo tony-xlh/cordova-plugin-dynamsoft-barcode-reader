@@ -186,8 +186,23 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
     NSLog(@"%s", "start scanning");
     _scanCallbackId = command.callbackId;
     [self makeWebViewTransparent];
-    NSString* license = [command.arguments objectAtIndex:0];
-    [self initDCEAndStart:license];
+    
+    NSDictionary* dict = [command.arguments objectAtIndex:0];
+    
+    NSString * dceLicense;
+    if (dict[@"dceLicense"] != nil) {
+        dceLicense = dict[@"dceLicense"];
+    }
+    
+    int resolution;
+    
+    if (dict[@"resolution"] != nil) {
+        resolution = [dict[@"resolution"] intValue];
+    }else{
+        resolution = 0;
+    }
+    
+    [self initDCEAndStart:dceLicense resolution:resolution];
 }
 
 - (void)stopScanning:(CDVInvokedUrlCommand*)command
@@ -273,15 +288,33 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 }
 
 
-- (void)initDCEAndStart: (NSString*) license {
+- (void)initDCEAndStart: (NSString*) license resolution:(int)resolution  {
     NSLog(@"init dce");
-    [DynamsoftCameraEnhancer initLicense:license verificationDelegate:self];
+    if (license != nil) {
+        [DynamsoftCameraEnhancer initLicense:license verificationDelegate:self];
+    }
+    EnumResolution res;
+    if (resolution == 0) {
+        res = EnumRESOLUTION_AUTO;
+    }else if (resolution == 1){
+        res = EnumRESOLUTION_480P;
+    }else if (resolution == 2){
+        res = EnumRESOLUTION_720P;
+    }else if (resolution == 3){
+        res = EnumRESOLUTION_1080P;
+    }else if (resolution == 4){
+        res = EnumRESOLUTION_1080P;
+    }else if (resolution == 5){
+        res = EnumRESOLUTION_4K;
+    }else{
+        res = EnumRESOLUTION_AUTO;
+    }
     _dceView = [DCECameraView cameraWithFrame:self.viewController.view.bounds];
     [self.viewController.view addSubview:_dceView];
     [self.viewController.view sendSubviewToBack:_dceView];
     [self.viewController.view bringSubviewToFront:self.webView];
     _dce = [[DynamsoftCameraEnhancer alloc] initWithView:_dceView];
-    [_dce setResolution:EnumRESOLUTION_720P];
+    [_dce setResolution:res];
     [_dce addListener:self];
     [_dce open];
 }
