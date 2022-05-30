@@ -25,7 +25,7 @@ exports.destroy = function (success, error) {
 
 exports.startScanning = function (arg0, onScanned, error) {
     if (!arg0){
-        arg0="DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTcGR6Vm05WDJrcEQ5YUoifQ==";
+        arg0={"dceLicense":"DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTcGR6Vm05WDJrcEQ5YUoifQ=="};
     }
     exec(onScanned, error, 'DBR', 'startScanning', [arg0]);
 };

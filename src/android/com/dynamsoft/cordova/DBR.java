@@ -82,9 +82,18 @@ public class DBR extends CordovaPlugin {
             }
             return true;
         }else if (action.equals("startScanning")) {
-            String dceLicense = args.getString(0);
+            String options = args.getString(0);
+            JSONObject jObject = new JSONObject(options);
+            String dceLicense = "";
+            Integer resolution = 0;
+            if (jObject.has("dceLicense")) {
+                dceLicense = jObject.getString("dceLicense");
+            }
+            if (jObject.has("resolution")) {
+                resolution = jObject.getInt("resolution");
+            }
             try{
-                startScanning(dceLicense, callbackContext);
+                startScanning(dceLicense, resolution, callbackContext);
             } catch (Exception e) {
                 e.printStackTrace();
                 callbackContext.error(e.getMessage());
@@ -165,7 +174,7 @@ public class DBR extends CordovaPlugin {
     }
 
     private void decode(String base64, CallbackContext callbackContext) {
-         cordova.getThreadPool().execute(new Runnable() {
+        cordova.getThreadPool().execute(new Runnable() {
             public void run() {
                 try {
                     JSONArray results = decodeBase64(base64);
@@ -177,7 +186,7 @@ public class DBR extends CordovaPlugin {
             }
         });
     }
-    
+
     private JSONArray decodeBase64(String base64) throws BarcodeReaderException, JSONException {
         TextResult[] results = barcodeReader.decodeBase64String(base64);
         return wrapResults(results);
@@ -203,11 +212,11 @@ public class DBR extends CordovaPlugin {
         return decodingResults;
     }
 
-    private void startScanning(String license, CallbackContext callbackContext){
+    private void startScanning(String license, Integer resolution, CallbackContext callbackContext){
         startCameraCallbackContext = callbackContext;
         if (mCameraEnhancer == null) {
             Log.d("DBR","start scanning");
-            initDCEAndStartScanning(license);
+            initDCEAndStartScanning(license,resolution);
         } else{
             cordova.getActivity().runOnUiThread(new Runnable() {
                 @Override
@@ -237,7 +246,7 @@ public class DBR extends CordovaPlugin {
         }
     }
 
-    private void initDCEAndStartScanning(String license){
+    private void initDCEAndStartScanning(String license,Integer resolution){
         if (!license.equals("")) {
             CameraEnhancer.initLicense(license, new DCELicenseVerificationListener() {
                 @Override
@@ -266,7 +275,7 @@ public class DBR extends CordovaPlugin {
                 makeWebViewTransparent();
                 bindDBRandDCE();
                 try {
-                    mCameraEnhancer.setResolution(EnumResolution.RESOLUTION_720P); //default resolution is 720P
+                    mCameraEnhancer.setResolution(EnumResolution.fromValue(resolution));
                     mCameraEnhancer.open();
                 } catch (CameraEnhancerException e) {
                     Log.d("DBR",e.getMessage());
@@ -312,7 +321,7 @@ public class DBR extends CordovaPlugin {
     private void getResolution(CallbackContext callbackContext){
         if (mCameraEnhancer != null){
             callbackContext.success(mCameraEnhancer.getResolution().getWidth()+"x"+mCameraEnhancer.getResolution().getHeight());
-       }else{
+        }else{
             callbackContext.error("not started");
         }
     }
