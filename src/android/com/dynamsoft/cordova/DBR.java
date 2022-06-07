@@ -234,6 +234,7 @@ public class DBR extends CordovaPlugin {
                 public void run() {
                     makeWebViewTransparent();
                     try {
+                        mCameraEnhancer.setResolution(EnumResolution.fromValue(resolution));
                         mCameraEnhancer.open();
                     } catch (CameraEnhancerException e) {
                         e.printStackTrace();
