@@ -64,6 +64,12 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
     CDVPluginResult* result;
     if (_barcodeReader != nil) {
         [_barcodeReader dispose];
+        _barcodeReader= nil;
+        if (_dceView != nil) {
+            [_dceView removeFromSuperview];
+            _dce = nil;
+            _dceView = nil;
+        }
         result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK];
     }else{
         result = [CDVPluginResult
@@ -211,7 +217,6 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
     if (_dce != nil) {
         [_dce close];
         [self restoreWebViewBackground];
-        [_dceView removeFromSuperview];
         result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK];
     }else{
         result = [CDVPluginResult
@@ -290,9 +295,6 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 
 - (void)initDCEAndStart: (NSString*) license resolution:(int)resolution  {
     NSLog(@"init dce");
-    if (license != nil) {
-        [DynamsoftCameraEnhancer initLicense:license verificationDelegate:self];
-    }
     EnumResolution res;
     if (resolution == 0) {
         res = EnumRESOLUTION_AUTO;
@@ -309,13 +311,20 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
     }else{
         res = EnumRESOLUTION_AUTO;
     }
-    _dceView = [DCECameraView cameraWithFrame:self.viewController.view.bounds];
-    [self.viewController.view addSubview:_dceView];
-    [self.viewController.view sendSubviewToBack:_dceView];
-    [self.viewController.view bringSubviewToFront:self.webView];
-    _dce = [[DynamsoftCameraEnhancer alloc] initWithView:_dceView];
+    
+    if (_dce == nil) {
+        if (license != nil) {
+            [DynamsoftCameraEnhancer initLicense:license verificationDelegate:self];
+        }
+        _dceView = [DCECameraView cameraWithFrame:self.viewController.view.bounds];
+        [self.viewController.view addSubview:_dceView];
+        [self.viewController.view sendSubviewToBack:_dceView];
+        [self.viewController.view bringSubviewToFront:self.webView];
+        _dce = [[DynamsoftCameraEnhancer alloc] initWithView:_dceView];
+        [_dce addListener:self];
+    }
+    
     [_dce setResolution:res];
-    [_dce addListener:self];
     [_dce open];
 }
 
