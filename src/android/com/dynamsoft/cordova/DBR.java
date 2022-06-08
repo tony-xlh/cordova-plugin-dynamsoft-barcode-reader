@@ -74,7 +74,6 @@ public class DBR extends CordovaPlugin {
         }else if (action.equals("destroy")) {
             try{
                 startCameraCallbackContext = null;
-                barcodeReader.destroy();
                 barcodeReader = null;
                 if (mCameraEnhancer !=null) {
                     cordova.getActivity().runOnUiThread(new Runnable() {
