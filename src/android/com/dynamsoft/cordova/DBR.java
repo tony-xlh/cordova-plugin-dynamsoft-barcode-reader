@@ -150,16 +150,21 @@ public class DBR extends CordovaPlugin {
         }else if (action.equals("switchTorch")){
             String desiredStatus = args.getString(0);
             Log.d("DBR", "desired status: "+desiredStatus);
-            try{
-                if (desiredStatus.equals("on")){
-                    mCameraEnhancer.turnOnTorch();
-                }else{
-                    mCameraEnhancer.turnOffTorch();
+            cordova.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try{
+                        if (desiredStatus.equals("on")){
+                            mCameraEnhancer.turnOnTorch();
+                        }else{
+                            mCameraEnhancer.turnOffTorch();
+                        }
+                        callbackContext.success();
+                    }catch (Exception e) {
+                        callbackContext.error(e.getMessage());
+                    }
                 }
-            }catch (Exception e) {
-                callbackContext.error(e.getMessage());
-            }
-            callbackContext.success();
+            });
             return true;
         }
         return false;
