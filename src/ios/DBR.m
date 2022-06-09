@@ -216,6 +216,7 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
     CDVPluginResult* result;
     if (_dce != nil) {
         [_dce close];
+        [_dceView setHidden:true];
         [self restoreWebViewBackground];
         result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK];
     }else{
@@ -322,6 +323,8 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
         [self.viewController.view bringSubviewToFront:self.webView];
         _dce = [[DynamsoftCameraEnhancer alloc] initWithView:_dceView];
         [_dce addListener:self];
+    }else{
+        [_dceView setHidden:false];
     }
     
     [_dce setResolution:res];
