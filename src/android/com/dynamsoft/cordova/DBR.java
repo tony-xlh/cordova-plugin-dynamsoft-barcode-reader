@@ -74,6 +74,7 @@ public class DBR extends CordovaPlugin {
         }else if (action.equals("destroy")) {
             try{
                 startCameraCallbackContext = null;
+                barcodeReader.destroy();
                 barcodeReader = null;
                 if (mCameraEnhancer !=null) {
                     cordova.getActivity().runOnUiThread(new Runnable() {
@@ -237,6 +238,7 @@ public class DBR extends CordovaPlugin {
                 @Override
                 public void run() {
                     makeWebViewTransparent();
+                    mCameraView.setVisibility(View.VISIBLE);
                     try {
                         mCameraEnhancer.setResolution(EnumResolution.fromValue(resolution));
                         mCameraEnhancer.open();
@@ -255,6 +257,7 @@ public class DBR extends CordovaPlugin {
                 @Override
                 public void run() {
                     restoreWebViewBackground();
+                    mCameraView.setVisibility(View.INVISIBLE);
                 }
             });
         } else{
