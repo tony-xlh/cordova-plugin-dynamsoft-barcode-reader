@@ -361,8 +361,10 @@ public class DBR extends CordovaPlugin {
     public void onResume(boolean multitasking){
         if (mCameraEnhancer != null) {
             try {
-                Log.d("DBR","resume");
-                mCameraEnhancer.open();
+                if (mCameraView.getVisibility() == View.VISIBLE) {
+                    Log.d("DBR","resume");
+                    mCameraEnhancer.open();
+                }
             } catch (CameraEnhancerException e) {
                 e.printStackTrace();
             }
