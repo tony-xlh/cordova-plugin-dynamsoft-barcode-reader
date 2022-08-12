@@ -33,8 +33,13 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 {
     [self.commandDelegate runInBackground:^{
         NSString* license = [command.arguments objectAtIndex:0];
-        NSString* orgID = [self getOrgIDFromLicense3:license];
-        [self initDBRWithOrganizationID: orgID];
+        if ([license containsString:@"DLS2"] == false) {
+            [self initDBRWithOfflineLicense:license];
+        }else{
+            NSString* orgID = [self getOrgIDFromLicense3:license];
+            [self initDBRWithOrganizationID: orgID];
+        }
+
         CDVPluginResult* result = [CDVPluginResult
                                        resultWithStatus: CDVCommandStatus_OK
                                        messageAsString: self->_barcodeReader.getVersion
@@ -51,6 +56,7 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
         NSLog(@"invalid license. use public trial");
         license = @"DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTcGR6Vm05WDJrcEQ5YUoifQ==";
     }
+    
     NSString * base64String = [license substringFromIndex:4];
     NSData *data = [[NSData alloc] initWithBase64EncodedString:base64String options:NSDataBase64DecodingIgnoreUnknownCharacters];
     NSError __autoreleasing * _Nullable error;
@@ -129,6 +135,15 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
         iDMDLSConnectionParameters* dls = [[iDMDLSConnectionParameters alloc] init];
         dls.organizationID = organizationID;
         _barcodeReader = [[DynamsoftBarcodeReader alloc] initLicenseFromDLS:dls verificationDelegate:self];
+    }else{
+        NSLog(@"%s", "Already initialized.");
+    }
+}
+
+- (void)initDBRWithOfflineLicense: (NSString*) license{
+    if (_barcodeReader == nil){
+        NSLog(@"%s", "Initializing dbr with a license");
+        _barcodeReader = [[DynamsoftBarcodeReader alloc] initWithLicense:license];
     }else{
         NSLog(@"%s", "Already initialized.");
     }
