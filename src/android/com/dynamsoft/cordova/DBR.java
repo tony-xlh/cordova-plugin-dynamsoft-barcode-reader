@@ -172,20 +172,24 @@ public class DBR extends CordovaPlugin {
     }
 
     private void init(String license, CallbackContext callbackContext) {
-        BarcodeReader.initLicense(license, new DBRLicenseVerificationListener() {
-            @Override
-            public void DBRLicenseVerificationCallback(boolean isSuccessful, Exception e) {
-                if (!isSuccessful) {
-                    e.printStackTrace();
+        if (barcodeReader == null) {
+            BarcodeReader.initLicense(license, new DBRLicenseVerificationListener() {
+                @Override
+                public void DBRLicenseVerificationCallback(boolean isSuccessful, Exception e) {
+                    if (!isSuccessful) {
+                        e.printStackTrace();
+                    }
                 }
+            });
+            try {
+                barcodeReader = new BarcodeReader();
+                callbackContext.success();
+            } catch (BarcodeReaderException e) {
+                e.printStackTrace();
+                callbackContext.error(e.getMessage());
             }
-        });
-        try {
-            barcodeReader = new BarcodeReader();
+        }else{
             callbackContext.success();
-        } catch (BarcodeReaderException e) {
-            e.printStackTrace();
-            callbackContext.error(e.getMessage());
         }
     }
 
