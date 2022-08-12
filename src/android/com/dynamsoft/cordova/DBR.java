@@ -167,6 +167,21 @@ public class DBR extends CordovaPlugin {
                 }
             });
             return true;
+        }else if (action.equals("setZoom")){
+            Double factor = args.getDouble(0);
+            Log.d("DBR", "zoom factor: "+factor);
+            cordova.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try{
+                        mCameraEnhancer.setZoom(factor.floatValue());
+                        callbackContext.success();
+                    }catch (Exception e) {
+                        callbackContext.error(e.getMessage());
+                    }
+                }
+            });
+            return true;
         }
         return false;
     }

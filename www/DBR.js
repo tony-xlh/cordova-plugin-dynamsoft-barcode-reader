@@ -50,3 +50,8 @@ exports.switchTorch = function (arg0, success, error) {
     exec(success, error, 'DBR', 'switchTorch', [arg0]);
 };
 
+exports.setZoom = function (arg0, success, error) {
+    exec(success, error, 'DBR', 'setZoom', [arg0]);
+};
+
+
