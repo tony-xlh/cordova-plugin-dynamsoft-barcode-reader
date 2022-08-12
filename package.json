@@ -28,6 +28,6 @@
     "type": "git",
     "url": "git+https://github.com/xulihang/cordova-plugin-dynamsoft-barcode-reader.git"
   },
-  "version": "1.4.5",
+  "version": "1.4.6",
   "dependencies": {}
 }
