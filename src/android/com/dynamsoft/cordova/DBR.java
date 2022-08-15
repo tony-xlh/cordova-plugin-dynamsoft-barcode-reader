@@ -182,6 +182,24 @@ public class DBR extends CordovaPlugin {
                 }
             });
             return true;
+        }else if (action.equals("setFocus")){
+            String options = args.getString(0);
+            JSONObject jObject = new JSONObject(options);
+            Double x = jObject.getDouble("x");
+            Double y = jObject.getDouble("y");
+            Log.d("DBR", "focus: "+x+","+y);
+            cordova.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try{
+                        mCameraEnhancer.setFocus(x.floatValue(),y.floatValue());
+                        callbackContext.success();
+                    }catch (Exception e) {
+                        callbackContext.error(e.getMessage());
+                    }
+                }
+            });
+            return true;
         }
         return false;
     }
