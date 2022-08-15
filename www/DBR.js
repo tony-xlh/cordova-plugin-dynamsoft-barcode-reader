@@ -54,4 +54,8 @@ exports.setZoom = function (arg0, success, error) {
     exec(success, error, 'DBR', 'setZoom', [arg0]);
 };
 
+exports.setFocus = function (arg0, success, error) {
+    exec(success, error, 'DBR', 'setFocus', [arg0]);
+};
+
 
