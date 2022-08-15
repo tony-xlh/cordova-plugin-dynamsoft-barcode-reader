@@ -153,6 +153,24 @@ $ cordova plugins add https://github.com/xulihang/cordova-plugin-dynamsoft-barco
     cordova.plugins.DBR.switchTorch(desiredStatus, success, error);
     ```
 
+*  `setZoom`
+
+    Set the zoom factor of the camera.
+
+    ```js
+    cordova.plugins.DBR.setZoom(zoomFactor, success, error);
+    ```
+    
+*  `setFocus`
+
+    Set the point to focus for the camera.
+
+    ```js
+    cordova.plugins.DBR.setFocus(point, success, error);
+    ```
+    
+    Point: `{x:number,y:number}`
+
 *  `getResolution`
 
     Get the current video resolution in format like this: `1280x720`.
