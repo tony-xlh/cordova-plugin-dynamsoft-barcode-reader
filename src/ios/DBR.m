@@ -24,6 +24,8 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 - (void)pauseScanning:(CDVInvokedUrlCommand*)command;
 - (void)resumeScanning:(CDVInvokedUrlCommand*)command;
 - (void)switchTorch:(CDVInvokedUrlCommand*)command;
+- (void)setZoom:(CDVInvokedUrlCommand*)command;
+- (void)setFocus:(CDVInvokedUrlCommand*)command;
 - (void)getResolution:(CDVInvokedUrlCommand*)command;
 @end
 
@@ -283,6 +285,41 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
         }else{
             [_dce turnOffTorch];
         }
+        result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK];
+    }else{
+        result = [CDVPluginResult
+                       resultWithStatus: CDVCommandStatus_ERROR
+                       messageAsString: @"not started"
+                       ];
+    }
+    [[self commandDelegate] sendPluginResult:result callbackId:command.callbackId];
+}
+
+- (void)setZoom:(CDVInvokedUrlCommand *)command
+{
+    NSNumber* factor = [command.arguments objectAtIndex:0];
+    CDVPluginResult* result;
+    if (_dce != nil) {
+        [_dce setZoom:factor.floatValue];
+        result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK];
+    }else{
+        result = [CDVPluginResult
+                       resultWithStatus: CDVCommandStatus_ERROR
+                       messageAsString: @"not started"
+                       ];
+    }
+    [[self commandDelegate] sendPluginResult:result callbackId:command.callbackId];
+}
+
+- (void)setFocus:(CDVInvokedUrlCommand *)command
+{
+    NSDictionary *point =  [command.arguments objectAtIndex:0];
+    double x = [[point valueForKey:@"x"] doubleValue];
+    double y = [[point valueForKey:@"y"] doubleValue];
+    CGPoint cgPoint = CGPointMake(x, y);
+    CDVPluginResult* result;
+    if (_dce != nil) {
+        [_dce setFocus:cgPoint];
         result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK];
     }else{
         result = [CDVPluginResult
