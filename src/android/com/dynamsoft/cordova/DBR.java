@@ -169,12 +169,14 @@ public class DBR extends CordovaPlugin {
             return true;
         }else if (action.equals("setZoom")){
             Double factor = args.getDouble(0);
-            Log.d("DBR", "zoom factor: "+factor);
             cordova.getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try{
-                        mCameraEnhancer.setZoom(factor.floatValue());
+                        float validFactor = Math.max(1,factor.floatValue());
+                        validFactor = Math.min(validFactor,mCameraEnhancer.getMaxZoomFactor());
+                        Log.d("DBR", "zoom factor: "+validFactor);
+                        mCameraEnhancer.setZoom(validFactor);
                         callbackContext.success();
                     }catch (Exception e) {
                         callbackContext.error(e.getMessage());
