@@ -347,12 +347,11 @@ public class DBR extends CordovaPlugin {
             @Override
             public void frameOutputCallback(DCEFrame frame, long timeStamp) {
                 try {
-                    Bitmap rotatedBitmap = BitmapUtils.rotateBitmap(frame.toBitmap(),frame.getOrientation(),false,false);
-                    TextResult[] textResults = barcodeReader.decodeBufferedImage(rotatedBitmap);
+                    TextResult][] textResults = barcodeReader.decodeBuffer(frame.getImageData(), frame.getWidth(),frame.getHeight(), frame.getStrides()[0], frame.getPixelFormat());
                     Log.d("DBR","Found "+textResults.length+" barcode(s).");
                     JSONObject scanResult = new JSONObject();
-                    scanResult.put("frameWidth",rotatedBitmap.getWidth());
-                    scanResult.put("frameHeight",rotatedBitmap.getHeight());
+                    scanResult.put("frameWidth",frame.getWidth());
+                    scanResult.put("frameHeight",frame.getHeight());
                     scanResult.put("results",wrapResults(textResults));
                     PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, scanResult);
                     pluginResult.setKeepCallback(true);
