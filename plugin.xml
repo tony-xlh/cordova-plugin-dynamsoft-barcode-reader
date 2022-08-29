@@ -10,7 +10,7 @@
 
 <podspec>
     <pods use-frameworks="true">
-        <pod name="DynamsoftBarcodeReader" spec="~> 8.9.3" />
+        <pod name="DynamsoftBarcodeReader" spec="~> 9.0.0" />
         <pod name="DynamsoftCameraEnhancer" spec="~> 2.1.3" />
     </pods>
 </podspec>

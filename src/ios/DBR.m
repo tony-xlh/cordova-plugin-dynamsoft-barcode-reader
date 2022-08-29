@@ -9,7 +9,7 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 
 @interface DBR: CDVPlugin<DCELicenseVerificationListener, DCEFrameListener>
   // Member variables go here.
-@property (nonatomic, retain) DynamsoftBarcodeReader* barcodeReader;
+@property (nonatomic, strong) DynamsoftBarcodeReader *barcodeReader;
 @property (nonatomic, strong) DynamsoftCameraEnhancer *dce;
 @property (nonatomic, strong) DCECameraView *dceView;
 @property Boolean decoding;
@@ -44,7 +44,7 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 
         CDVPluginResult* result = [CDVPluginResult
                                        resultWithStatus: CDVCommandStatus_OK
-                                       messageAsString: self->_barcodeReader.getVersion
+                                       messageAsString: @"success"
                                        ];
 
         [[self commandDelegate] sendPluginResult:result callbackId:command.callbackId];
