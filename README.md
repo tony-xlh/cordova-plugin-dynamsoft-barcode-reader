@@ -106,6 +106,7 @@ $ cordova plugins add https://github.com/xulihang/cordova-plugin-dynamsoft-barco
     ```ts
     interface ScanOptions {
       dceLicense?: string;
+      rotate?: boolean; //whether to convert the frame to bitmap and rotate it, false by default
       resolution?: number; // check out the following enum of resolution
     }
     
@@ -119,7 +120,7 @@ $ cordova plugins add https://github.com/xulihang/cordova-plugin-dynamsoft-barco
     }
     ```
 
-    The `onScanned` callback will return the frame resolution and barcode results.
+    The `onScanned` callback will return the frame resolution, frame rotation and barcode results.
 
 *  `stopScanning`
 
