@@ -182,7 +182,8 @@ $ cordova plugins add https://github.com/xulihang/cordova-plugin-dynamsoft-barco
 
 ## Demo
 
-[Ionic React Barcode Scanner](https://github.com/xulihang/Ionic-React-Cordova-Barcode-Scanner)
+* [Ionic Angular Barcode Scanner](https://github.com/xulihang/Ionic-Angular-Cordova-Barcode-Scanner)
+* [Ionic React Barcode Scanner](https://github.com/xulihang/Ionic-React-Cordova-Barcode-Scanner)
 
 ## Ionic Wrapper
 
