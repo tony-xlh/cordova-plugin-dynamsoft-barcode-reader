@@ -34,13 +34,14 @@ import com.dynamsoft.dce.EnumResolution;
 
 
 /**
- * This class echoes a string called from JavaScript.
+ * This class bridges Dynamsoft Barcode Reader and Dynamsoft Camera Enhancer for the JavaScript.
  */
 public class DBR extends CordovaPlugin {
     private BarcodeReader barcodeReader;
     private CameraEnhancer mCameraEnhancer = null;
     private DCECameraView mCameraView = null;
     private CallbackContext startCameraCallbackContext;
+    private Boolean rotate = false;
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if (action.equals("init")) {
@@ -97,11 +98,15 @@ public class DBR extends CordovaPlugin {
             JSONObject jObject = new JSONObject(options);
             String dceLicense = "";
             Integer resolution = 0;
+            rotate = false;
             if (jObject.has("dceLicense")) {
                 dceLicense = jObject.getString("dceLicense");
             }
             if (jObject.has("resolution")) {
                 resolution = jObject.getInt("resolution");
+            }
+            if (jObject.has("rotate")) {
+                rotate = jObject.getBoolean("rotate");
             }
             try{
                 startScanning(dceLicense, resolution, callbackContext);
@@ -347,11 +352,22 @@ public class DBR extends CordovaPlugin {
             @Override
             public void frameOutputCallback(DCEFrame frame, long timeStamp) {
                 try {
-                    TextResult][] textResults = barcodeReader.decodeBuffer(frame.getImageData(), frame.getWidth(),frame.getHeight(), frame.getStrides()[0], frame.getPixelFormat());
-                    Log.d("DBR","Found "+textResults.length+" barcode(s).");
                     JSONObject scanResult = new JSONObject();
-                    scanResult.put("frameWidth",frame.getWidth());
-                    scanResult.put("frameHeight",frame.getHeight());
+                    TextResult[] textResults;
+                    if (rotate) {
+                        Bitmap rotatedBitmap = BitmapUtils.rotateBitmap(frame.toBitmap(),frame.getOrientation(),false,false);
+                        textResults = barcodeReader.decodeBufferedImage(rotatedBitmap);
+                        scanResult.put("frameWidth",rotatedBitmap.getWidth());
+                        scanResult.put("frameHeight",rotatedBitmap.getHeight());
+                        scanResult.put("rotation",0);
+                    }else{
+                        textResults = barcodeReader.decodeBuffer(frame.getImageData(), frame.getWidth(),frame.getHeight(), frame.getStrides()[0], frame.getPixelFormat());
+                        scanResult.put("frameWidth",frame.getWidth());
+                        scanResult.put("frameHeight",frame.getHeight());
+                        scanResult.put("rotation",frame.getOrientation());
+                    }
+
+                    Log.d("DBR","Found "+textResults.length+" barcode(s).");
                     scanResult.put("results",wrapResults(textResults));
                     PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, scanResult);
                     pluginResult.setKeepCallback(true);
