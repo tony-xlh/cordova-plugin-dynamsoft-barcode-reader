@@ -13,6 +13,7 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 @property (nonatomic, strong) DynamsoftCameraEnhancer *dce;
 @property (nonatomic, strong) DCECameraView *dceView;
 @property Boolean decoding;
+@property Boolean rotate;
 @property NSString* scanCallbackId;
 - (void)init:(CDVInvokedUrlCommand*)command;
 - (void)decode:(CDVInvokedUrlCommand*)command;
@@ -224,6 +225,11 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
     }else{
         resolution = 0;
     }
+    _rotate = true;
+    if (dict[@"rotate"] != nil) {
+        _rotate = [dict[@"resolution"] boolValue];
+    }
+    
     
     [self initDCEAndStart:dceLicense resolution:resolution];
 }
@@ -388,7 +394,13 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
     UIImage *image = [frame toUIImage];
     UIImage *rotatedImage = [self imageRotatedByDegrees:frame.orientation image:image];
 
-    NSArray<iTextResult*>* results = [_barcodeReader decodeImage:rotatedImage withTemplate:@"" error:&error];
+    NSArray<iTextResult*>* results;
+    
+    if (_rotate == true) {
+        results = [_barcodeReader decodeImage:rotatedImage withTemplate:@"" error:&error];
+    }else{
+        results = [_barcodeReader decodeBuffer:frame.imageData withWidth:frame.width height:frame.height stride:frame.stride format:frame.pixelFormat error: &error];
+    }
     NSArray<NSDictionary*> * resultsArray = [self wrapResults:results];
     
     NSDictionary *dictionary = @{
