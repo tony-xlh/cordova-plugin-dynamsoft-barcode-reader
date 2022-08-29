@@ -359,12 +359,12 @@ public class DBR extends CordovaPlugin {
                         textResults = barcodeReader.decodeBufferedImage(rotatedBitmap);
                         scanResult.put("frameWidth",rotatedBitmap.getWidth());
                         scanResult.put("frameHeight",rotatedBitmap.getHeight());
-                        scanResult.put("rotation",0);
+                        scanResult.put("frameRotation",0);
                     }else{
                         textResults = barcodeReader.decodeBuffer(frame.getImageData(), frame.getWidth(),frame.getHeight(), frame.getStrides()[0], frame.getPixelFormat());
                         scanResult.put("frameWidth",frame.getWidth());
                         scanResult.put("frameHeight",frame.getHeight());
-                        scanResult.put("rotation",frame.getOrientation());
+                        scanResult.put("frameRotation",frame.getOrientation());
                     }
 
                     Log.d("DBR","Found "+textResults.length+" barcode(s).");
