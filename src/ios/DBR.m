@@ -35,15 +35,25 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 - (void)init:(CDVInvokedUrlCommand*)command
 {
     [self.commandDelegate runInBackground:^{
-        NSString* license = [command.arguments objectAtIndex:0];
-        [DynamsoftBarcodeReader initLicense:license verificationDelegate:self];
-        self.barcodeReader = [[DynamsoftBarcodeReader alloc] init];
-        CDVPluginResult* result = [CDVPluginResult
-                                       resultWithStatus: CDVCommandStatus_OK
-                                       messageAsString: @"success"
-                                       ];
+        if (self.barcodeReader == nil) {
+            NSString* license = [command.arguments objectAtIndex:0];
+            [DynamsoftBarcodeReader initLicense:license verificationDelegate:self];
+            self.barcodeReader = [[DynamsoftBarcodeReader alloc] init];
+            CDVPluginResult* result = [CDVPluginResult
+                                           resultWithStatus: CDVCommandStatus_OK
+                                           messageAsString: @"success"
+                                           ];
 
-        [[self commandDelegate] sendPluginResult:result callbackId:command.callbackId];
+            [[self commandDelegate] sendPluginResult:result callbackId:command.callbackId];
+        }else{
+            CDVPluginResult* result = [CDVPluginResult
+                                           resultWithStatus: CDVCommandStatus_ERROR
+                                           messageAsString: @"already initialized"
+                                           ];
+
+            [[self commandDelegate] sendPluginResult:result callbackId:command.callbackId];
+        }
+        
     }];
     
 }
