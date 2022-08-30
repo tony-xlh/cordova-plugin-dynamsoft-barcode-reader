@@ -7,7 +7,7 @@
 
 CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 
-@interface DBR: CDVPlugin<DCELicenseVerificationListener, DCEFrameListener>
+@interface DBR: CDVPlugin<DBRLicenseVerificationListener, DCELicenseVerificationListener, DCEFrameListener>
   // Member variables go here.
 @property (nonatomic, strong) DynamsoftBarcodeReader *barcodeReader;
 @property (nonatomic, strong) DynamsoftCameraEnhancer *dce;
@@ -36,13 +36,8 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 {
     [self.commandDelegate runInBackground:^{
         NSString* license = [command.arguments objectAtIndex:0];
-        if ([license containsString:@"DLS2"] == false) {
-            [self initDBRWithOfflineLicense:license];
-        }else{
-            NSString* orgID = [self getOrgIDFromLicense3:license];
-            [self initDBRWithOrganizationID: orgID];
-        }
-
+        [DynamsoftBarcodeReader initLicense:license verificationDelegate:self];
+        self.barcodeReader = [[DynamsoftBarcodeReader alloc] init];
         CDVPluginResult* result = [CDVPluginResult
                                        resultWithStatus: CDVCommandStatus_OK
                                        messageAsString: @"success"
@@ -53,20 +48,6 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
     
 }
 
-- (NSString*) getOrgIDFromLicense3: (NSString*) license
-{
-    if ([license containsString:@"DLS2"] == false) {
-        NSLog(@"invalid license. use public trial");
-        license = @"DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTcGR6Vm05WDJrcEQ5YUoifQ==";
-    }
-    
-    NSString * base64String = [license substringFromIndex:4];
-    NSData *data = [[NSData alloc] initWithBase64EncodedString:base64String options:NSDataBase64DecodingIgnoreUnknownCharacters];
-    NSError __autoreleasing * _Nullable error;
-    NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
-    NSString * orgID = dict[@"organizationID"];
-    return orgID;
-}
 
 - (void)destroy:(CDVInvokedUrlCommand*)command
 {
@@ -131,35 +112,13 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
     [[self commandDelegate] sendPluginResult:result callbackId:command.callbackId];
 }
 
-
-- (void)initDBRWithOrganizationID: (NSString*) organizationID{
-    if (_barcodeReader == nil){
-        NSLog(@"%s", "Initializing dbr with organization id");
-        iDMDLSConnectionParameters* dls = [[iDMDLSConnectionParameters alloc] init];
-        dls.organizationID = organizationID;
-        _barcodeReader = [[DynamsoftBarcodeReader alloc] initLicenseFromDLS:dls verificationDelegate:self];
-    }else{
-        NSLog(@"%s", "Already initialized.");
-    }
-}
-
-- (void)initDBRWithOfflineLicense: (NSString*) license{
-    if (_barcodeReader == nil){
-        NSLog(@"%s", "Initializing dbr with a license");
-        _barcodeReader = [[DynamsoftBarcodeReader alloc] initWithLicense:license];
-    }else{
-        NSLog(@"%s", "Already initialized.");
-    }
-}
-
-
 - (NSArray<NSDictionary*>*)decodeBase64: (NSString*) base64 {
     if (_barcodeReader != nil && _decoding==false){
         @try {
             NSLog(@"Decoding...");
             _decoding=true;
             NSError __autoreleasing * _Nullable error;
-            NSArray<iTextResult*>* results = [_barcodeReader decodeBase64:base64 withTemplate:@"" error:&error];
+            NSArray<iTextResult*>* results = [_barcodeReader decodeBase64:base64 error:&error];
             _decoding=false;
             NSArray<NSDictionary*> * resultsArray = [self wrapResults:results];
             return resultsArray;
@@ -398,7 +357,7 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
     NSDictionary *dictionary;
     
     if (_rotate == true) {
-        results = [_barcodeReader decodeImage:rotatedImage withTemplate:@"" error:&error];
+        results = [_barcodeReader decodeImage:rotatedImage error:&error];
         NSArray<NSDictionary*> * resultsArray = [self wrapResults:results];
         dictionary = @{
             @"results" : resultsArray,
