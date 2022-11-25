@@ -360,13 +360,13 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 
 - (void)frameOutPutCallback:(nonnull DCEFrame *)frame timeStamp:(NSTimeInterval)timeStamp {
     NSError __autoreleasing * _Nullable error;
-    UIImage *image = [frame toUIImage];
-    UIImage *rotatedImage = [self imageRotatedByDegrees:frame.orientation image:image];
 
     NSArray<iTextResult*>* results;
     NSDictionary *dictionary;
     
     if (_rotate == true) {
+        UIImage *image = [frame toUIImage];
+        UIImage *rotatedImage = [self imageRotatedByDegrees:frame.orientation image:image];
         results = [_barcodeReader decodeImage:rotatedImage error:&error];
         NSArray<NSDictionary*> * resultsArray = [self wrapResults:results];
         dictionary = @{
@@ -383,10 +383,6 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
          @"frameHeight" : @(frame.height),
                 @"frameRotation" : @(frame.orientation)};
     }
-    
-    
-    
-    
     
     //NSData * JSONData = [NSJSONSerialization dataWithJSONObject:dictionary
     //                                                    options:kNilOptions
