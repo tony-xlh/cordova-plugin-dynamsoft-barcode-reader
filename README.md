@@ -4,6 +4,12 @@
 
 [Dynamsoft Barcode Reader](https://www.dynamsoft.com/barcode-reader/overview/) SDK for Cordova.
 
+## SDK Versions Used for Different Platforms
+
+| Product      | Android |    iOS |
+| ----------- | ----------- | -----------  |
+| Dynamsoft Barcode Reader    | 9.x       | 9.x     |
+
 ## Supported Platforms
 
 * Android
