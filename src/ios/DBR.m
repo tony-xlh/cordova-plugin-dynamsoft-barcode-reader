@@ -63,7 +63,7 @@ CGFloat degreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
 {
     CDVPluginResult* result;
     if (_barcodeReader != nil) {
-        [_barcodeReader dispose];
+        //[_barcodeReader dispose];
         _barcodeReader= nil;
         if (_dceView != nil) {
             [_dceView removeFromSuperview];
