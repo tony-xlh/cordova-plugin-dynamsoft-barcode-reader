@@ -8,7 +8,7 @@
 
 | Product      | Android |    iOS |
 | ----------- | ----------- | -----------  |
-| Dynamsoft Barcode Reader    | 9.x       | 9.x     |
+| Dynamsoft Barcode Reader    | 9.6.40       | 9.6.40     |
 
 ## Supported Platforms
 
