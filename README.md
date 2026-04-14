@@ -4,9 +4,14 @@
 
 [Dynamsoft Barcode Reader](https://www.dynamsoft.com/barcode-reader/overview/) SDK for Cordova.
 
-> [!WARNING]
-> This package is no longer maintained. You can use the JavaScript version of Dynamsoft Barcode Reader instead.
+## [!WARNING]
 
+This package is no longer maintained.
+
+For customers who are still evaluating Cordova integrations, we recommend the following alternatives instead:
+
+- **DBR React Native**: Uses JavaScript and is designed for mobile apps, offering better performance.
+- **DBR JS**: Uses WebView for integration within mobile apps and is ideal for customers without strict performance requirements.
 
 ## SDK Versions Used for Different Platforms
 
