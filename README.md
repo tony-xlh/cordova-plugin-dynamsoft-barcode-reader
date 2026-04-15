@@ -5,7 +5,7 @@
 [Dynamsoft Barcode Reader](https://www.dynamsoft.com/barcode-reader/overview/) SDK for Cordova.
 
 > [!WARNING]
-> This package is no longer maintained. You can use the JavaScript version of Dynamsoft Barcode Reader instead.
+> This package is no longer maintained. You can use the [JavaScript version of Dynamsoft Barcode Reader](https://www.dynamsoft.com/barcode-reader/sdk-javascript/) instead.
 
 
 ## SDK Versions Used for Different Platforms
